@@ -1,0 +1,42 @@
+{
+  "name": "slj-ci",
+  "version": "1.0.0",
+  "description": "A ci system for github",
+  "main": "main.js",
+  "scripts": {
+    "start": "nodemon start",
+    "test": "lab -e test -T node_modules/lab-babel -t 100 -l",
+    "coverage": "lab -l -T node_modules/lab-babel -r lcov -o coverage/lcov.info",
+    "report": "cat ./coverage/lcov.info | coveralls"
+  },
+  "keywords": [
+    "backend",
+    "hapi",
+    "sj"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:junfeisu/slj-cli.git"
+  },
+  "author": "junfeisu",
+  "devDependencies": {
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "babel-preset-es2017": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
+    "coveralls": "^2.13.3",
+    "istanbul": "^0.4.5",
+    "lab": "^14.3.4",
+    "lab-babel": "^1.1.1",
+    "nodemon": "^1.18.3"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "boom": "^7.2.0",
+    "hapi": "^17.5.3",
+    "joi": "^13.6.0",
+    "jsonwebtoken": "^8.3.0",
+    "mysql": "^2.16.0",
+    "socket.io": "^2.1.1"
+  }
+}
