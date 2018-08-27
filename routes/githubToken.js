@@ -1,9 +1,9 @@
 import Joi from 'joi'
 import Boom from 'boom'
 
-const testApi = {
-  path: '/index',
-  method: 'GET',
+const githubAPI = {
+  path: '/token',
+  method: 'PUT',
   handler: (req, h) => {
     return 'This is index API'
   }

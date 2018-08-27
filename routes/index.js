@@ -1,5 +1,5 @@
-import testRoute from './test'
+// import testRoute from './test'
 
 export default [
-  testRoute,
+  // testRoute,
 ]

@@ -1,7 +1,9 @@
 import server from './server'
 import createWebhook from './utils/createWebhook'
+import createToken from './utils/createToken'
 
-createWebhook()
+// createWebhook()
+createToken()
 
 async function start () {
   try {
