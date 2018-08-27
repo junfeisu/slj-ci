@@ -26,7 +26,6 @@ const fetch = ({url = '', method = 'GET', data = {}, params = {}, auth = {}}) =>
         data: response.data
       })
     }).catch(err => {
-      console.log('err', err)
       reject({
         status: 0,
         err: err

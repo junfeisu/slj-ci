@@ -1,7 +1,7 @@
 import fetch, { updateToken } from '../utils/fetch'
 import getBoomErrWay from '../utils/errorTable'
 
-const createToken = async (payload) => {
+const createToken = (payload) => {
   const { scopes, note } = payload
   return new Promise((resolve, reject) => {
     fetch({
@@ -20,6 +20,11 @@ const createToken = async (payload) => {
       resolve({status: 1, data: result.data})
     }).catch(err => {
       const { response } = err.err
+
+      if (!response) {
+        reject(getBoomErrWay('401')('invalid token'))
+        return
+      }
       reject(getBoomErrWay(response.status)(response.data.message))
     })
   })
