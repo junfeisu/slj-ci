@@ -1,5 +1,7 @@
-// import testRoute from './test'
+import githubToken from './githubToken'
+import webhook from './webhook'
 
 export default [
-  // testRoute,
+  githubToken,
+  webhook
 ]

@@ -1,5 +1,4 @@
 import Hapi from 'hapi'
-import routes from './routes'
 
 export const serverConf = {
   port: process.env.PORT || 8000,
@@ -10,8 +9,5 @@ export const serverConf = {
 }
 const server = Hapi.server(serverConf)
 
-routes.forEach(route => {
-  server.route(route)
-})
 
 export default server

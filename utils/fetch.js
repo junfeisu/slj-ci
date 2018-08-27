@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const host = 'https://api.github.com'
-let token = ''
+let token = '04140695bb0f2f6c7d0bcc0fe11fd5d1aad50d75'
 
 export function updateToken (newToken) {
   if (newToken && newToken !== token) {
@@ -9,7 +9,7 @@ export function updateToken (newToken) {
   }
 }
 
-const fetch = async ({url = '', method = 'GET', data = {}, params = {}, auth = {}}) => {
+const fetch = ({url = '', method = 'GET', data = {}, params = {}, auth = {}}) => {
   return new Promise((resolve, reject) => {
     axios.request({
       url: host + url,
@@ -17,13 +17,20 @@ const fetch = async ({url = '', method = 'GET', data = {}, params = {}, auth = {
       data,
       params,
       headers: {
-        Authorization: token
+        Authorization: 'token ' + token
       },
       auth
     }).then(response => {
-      resolve(response.data)
+      resolve({
+        status: 1,
+        data: response.data
+      })
     }).catch(err => {
-      reject(err)
+      console.log('err', err)
+      reject({
+        status: 0,
+        err: err
+      })
     })
   })
 }

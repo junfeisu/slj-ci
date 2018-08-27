@@ -1,23 +1,21 @@
 import server from './server'
-import createWebhook from './utils/createWebhook'
-import createToken from './utils/createToken'
-
-// createWebhook()
-createToken()
+import routes from './routes'
 
 async function start () {
   try {
-    await server.register({
-      plugin: require('./socket/index'),
-      options: {}
+    await server.register(require('./plugins/socket').default)
+
+    server.realm.modifiers.route.prefix = '/api'
+    routes.forEach(route => {
+      server.route(route)
     })
+
     await server.start()
+    console.log('server is start at ' + server.info.uri)
   } catch (err) {
     console.log('start server err is ', err)
     throw err
   }
-
-  console.log('server is start at ' + server.info.uri)
 }
 
 process.on('unhandledRejection', err => {

@@ -1,14 +1,23 @@
 import Joi from 'joi'
 import Boom from 'boom'
+import createToken from '../githubModels/token'
 
-const githubAPI = {
-  path: '/token',
+const addToken = {
+  path: '/token/add',
   method: 'PUT',
-  handler: (req, h) => {
-    return 'This is index API'
+  options: {
+    validate: {
+      payload: {
+        scopes: Joi.array(),
+        note: Joi.string().required()
+      }
+    },
+    handler: (req, h) => {
+      return createToken(req.payload)
+    }
   }
 }
 
 export default [
-  testApi,
+  addToken,
 ]
