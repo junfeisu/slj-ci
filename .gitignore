@@ -11,7 +11,9 @@ yarn-error.*
 # coverage
 coverage/*
 
-githubModels/token.js
+# config file
+config/mysqlConf.json
+config/githubConf.json
 
 # editor
 .idea

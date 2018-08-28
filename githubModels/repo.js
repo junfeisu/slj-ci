@@ -1,5 +1,5 @@
-import fetch from '../utils/fetch'
-import getBoomErrWay from '../utils/errorTable'
+import fetch from '../utils/request/fetch'
+import getBoomErrWay from '../utils/request/errorTable'
 
 const getRepoList = () => {
   return new Promise((resolve, reject) => {
