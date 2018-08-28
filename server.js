@@ -7,7 +7,5 @@ export const serverConf = {
     cors: true
   }
 }
-const server = Hapi.server(serverConf)
 
-
-export default server
+export default Hapi.server(serverConf)

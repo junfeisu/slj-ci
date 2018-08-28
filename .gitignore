@@ -11,6 +11,8 @@ yarn-error.*
 # coverage
 coverage/*
 
+githubModels/token.js
+
 # editor
 .idea
 .vscode
