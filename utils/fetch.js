@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const host = 'https://api.github.com'
-let token = '4fd8884c9bbd5180e59bf4c82797503b0ef64ecb'
+let token = 'fc531c3917b514b5a9bf9a517cc480448d10725d'
 
 export function updateToken (newToken) {
   if (newToken && newToken !== token) {
