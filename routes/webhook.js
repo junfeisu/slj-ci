@@ -1,8 +1,7 @@
 import Joi from 'joi'
-import Boom from 'boom'
-import webhook from '../githubModels/webhook'
+import webhookModel from '../githubModels/webhook'
 
-const { addWebhook, updateWebhook, getWebhooks, deleteWebhook } = webhook
+const { addWebhook, updateWebhook, getWebhooks, deleteWebhook } = webhookModel
 
 const addHook = {
   path: '/hook/add',

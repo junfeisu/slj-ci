@@ -22,7 +22,7 @@ const createToken = (payload) => {
       const { response } = err.err
 
       if (!response) {
-        reject(getBoomErrWay('401')('invalid token'))
+        reject(getBoomErrWay('401')('auth failed'))
         return
       }
       reject(getBoomErrWay(response.status)(response.data.message))
