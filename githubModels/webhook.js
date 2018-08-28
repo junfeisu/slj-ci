@@ -11,12 +11,13 @@ const addWebhook = (payload) => {
         name,
         config,
         events,
-        active
+        active,
       }
     }).then(res => {
       resolve({status: 1, data: res.data})
     }).catch(err => {
       const { response } = err.err
+
       if (!response) {
         reject(getBoomErrWay('401')('token invalid'))
         return
