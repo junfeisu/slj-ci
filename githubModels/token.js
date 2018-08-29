@@ -2,6 +2,9 @@ import fetch, { updateToken } from '../utils/request/fetch'
 import getBoomErrWay from '../utils/request/errorTable'
 import githubConf from '../config/githubConf.json'
 import axios from 'axios'
+import userModel from '../githubModels/user'
+
+const { getAuthedUser } = userModel
 
 const createToken = (payload) => {
   const { scopes, note } = payload
@@ -37,8 +40,14 @@ const getAccessToken = (code) => {
       client_secret,
       code
     }).then(res => {
-      console.log(res.data)
-      resolve({status: 1, data: res.data})
+      let extractReg = /^access_token=(.+)/
+      let accessToken = res.data.split('&')[0]
+      
+      accessToken.replace(extractReg, (macth, $token) => {
+        accessToken = $token
+      })
+      updateToken(accessToken)
+      getAuthedUser(resolve, reject)
     }).catch(err => {
       const { response } = err
       
