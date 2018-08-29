@@ -1,7 +1,10 @@
 import Joi from 'joi'
 import getBoomErrWay from '../utils/request/errorTable'
+import tokenUtil from '../utils/request/token'
 import connection from '../utils/mysql/mysqlConnection'
 import cryptic from '../utils/cryptic'
+
+const { generateToken } = tokenUtil
 
 const addUser = {
   path: '/user/add',
@@ -57,6 +60,8 @@ const userLogin = {
           if (!result.length) {
             reject(getBoomErrWay('400')('username or password is not right'))
           }
+
+          result[0]['token'] = generateToken(result[0].user_id, '1d')
 
           resolve({status: 1, data: result[0]})
         })
