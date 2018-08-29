@@ -7,7 +7,8 @@
     "start": "nodemon start",
     "test": "lab -e test -T node_modules/lab-babel -t 100 -l",
     "coverage": "lab -l -T node_modules/lab-babel -r lcov -o coverage/lcov.info",
-    "report": "cat ./coverage/lcov.info | coveralls"
+    "report": "cat ./coverage/lcov.info | coveralls",
+    "before": "node scripts/createDb.js"
   },
   "keywords": [
     "backend",
