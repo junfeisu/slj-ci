@@ -1,6 +1,8 @@
 import Joi from 'joi'
 import Boom from 'boom'
-import createToken from '../githubModels/token'
+import tokenModel from '../githubModels/token'
+
+const { createToken, getAccessToken } = tokenModel
 
 const addToken = {
   path: '/token/add',
@@ -18,6 +20,22 @@ const addToken = {
   }
 }
 
+const getToken = {
+  path: '/token/{code}',
+  method: 'GET',
+  options: {
+    validate: {
+      params: {
+        code: Joi.string().min(1).required()
+      }
+    },
+    handler: (req, h) => {
+      return getAccessToken(req.params.code)
+    }
+  }
+}
+
 export default [
   addToken,
+  getToken,
 ]
