@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import repoModel from '../githubModels/repo'
+import repoModel from '../models/github/repo'
 
 const {
   getRepoList,

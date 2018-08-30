@@ -1,26 +1,12 @@
 import Joi from 'joi'
 import Boom from 'boom'
-import tokenModel from '../githubModels/token'
+import githubTokenModel from '../models/github/token'
+import gitlabTokenModel from '../models/gitlab/token'
 
-const { createToken, getGithubAccessToken, getGitlabAccessToken } = tokenModel
+const { getGithubAccessToken } = githubTokenModel
+const { getGitlabAccessToken } = gitlabTokenModel
 
-const addToken = {
-  path: '/token/add',
-  method: 'PUT',
-  options: {
-    validate: {
-      payload: {
-        scopes: Joi.array(),
-        note: Joi.string().required()
-      }
-    },
-    handler: (req, h) => {
-      return createToken(req.payload)
-    }
-  }
-}
-
-const getToken = {
+const getAccessToken = {
   path: '/token/{type}/{code}',
   method: 'GET',
   options: {
@@ -39,6 +25,5 @@ const getToken = {
 }
 
 export default [
-  addToken,
-  getToken,
+  getAccessToken,
 ]

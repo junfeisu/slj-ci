@@ -1,10 +1,44 @@
-import fetch from '../utils/request/fetch'
-import getBoomErrWay from '../utils/request/errorTable'
+import fetch from '../../utils/request/fetch'
+import getBoomErrWay from '../../utils/request/errorTable'
 
-const getRepoList = () => {
+const addGithubWebhook = (payload) => {
+  const { repo, config, name, events, active } = payload
   return new Promise((resolve, reject) => {
     fetch({
-      url: '/user/repos'
+      url: `/repos/junfeisu/${repo}/hooks`,
+      method: 'POST',
+      data: {
+        name,
+        config,
+        events,
+        active,
+      }
+    }).then(res => {
+      resolve({status: 1, data: res.data})
+    }).catch(err => {
+      const { response } = err.err
+
+      if (!response) {
+        reject(getBoomErrWay('401')('auth failed'))
+        return
+      }
+      reject(getBoomErrWay(response.status)(response.data.message))
+    })
+  })
+}
+
+const updateGithubWebhook = (hookId, payload) => {
+  const { repo, config, events, active } = payload
+
+  return new Promise((resolve, reject) => {
+    fetch({
+      url: `/repos/junfeisu/${repo}/hooks/${hookId}`,
+      method: 'PATCH',
+      data: {
+        config,
+        events,
+        active
+      }
     }).then(res => {
       resolve({status: 1, data: res.data})
     }).catch(err => {
@@ -20,10 +54,10 @@ const getRepoList = () => {
   })
 }
 
-const getUserRepoList = () => {
+const getGithubWebhooks = (repo) => {
   return new Promise((resolve, reject) => {
     fetch({
-      url: '/users/junfeisu/repos'
+      url: `/repos/junfeisu/${repo}/hooks`
     }).then(res => {
       resolve({status: 1, data: res.data})
     }).catch(err => {
@@ -39,55 +73,15 @@ const getUserRepoList = () => {
   })
 }
 
-const getOrgRepoList = (params) => {
-  const { org, type } = params
+const deleteGithubWebhook = (params) => {
+  const { hookId, repo } = params
+
   return new Promise((resolve, reject) => {
     fetch({
-      url: `/orgs/${org}/repos`,
-      params: {
-        type
-      }
-    }).then(res => {
-      resolve({status: 1, data: res.data})
-    }).catch(err => {
-      const { response } = err.err
-
-      if (!response) {
-        reject(getBoomErrWay('401')('auth failed'))
-        return
-      }
-
-      reject(getBoomErrWay(response.status)(response.data.message))
-    })
-  })
-}
-
-const getSingleRepo = (repo) => {
-  return new Promise((resolve, reject) => {
-    fetch({
-      url: `/repos/junfeisu/${repo}`,
-    }).then(res => {
-      resolve({status: 1, data: res.data})
-    }).catch(err => {
-      const { response } = err.err
-
-      if (!response) {
-        reject(getBoomErrWay('401')('auth failed'))
-        return
-      }
-
-      reject(getBoomErrWay(response.status)(response.data.message))
-    })
-  })
-}
-
-const deleteSingleRepo = (repo) => {
-  return new Promise((resolve, reject) => {
-    fetch({
-      url: `/repos/junfeisu/${repo}`,
+      url: `/repos/junfeisu/${repo}/hooks/${hookId}`,
       method: 'DELETE'
     }).then(res => {
-      resolve({status: 1, data: `delete repo ${repo} success`})
+      resolve({status: 1, data: 'delete webhook success'})
     }).catch(err => {
       const { response } = err.err
 
@@ -102,9 +96,8 @@ const deleteSingleRepo = (repo) => {
 }
 
 export default {
-  getRepoList,
-  getUserRepoList,
-  getOrgRepoList,
-  getSingleRepo,
-  deleteSingleRepo
+  addGithubWebhook,
+  updateGithubWebhook,
+  getGithubWebhooks,
+  deleteGithubWebhook,
 }

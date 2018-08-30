@@ -1,10 +1,12 @@
 import Joi from 'joi'
-import webhookModel from '../githubModels/webhook'
+import githubWebhookModel from '../models/github/webhook'
+import gitlabWebhookModel from '../models/github/webhook'
 
-const { addWebhook, updateWebhook, getWebhooks, deleteWebhook } = webhookModel
+const { addGithubWebhook, updateGithubWebhook, getGithubWebhooks, deleteGithubWebhook } = githubWebhookModel
+const { addGitlabWebhook, deleteGitlabWebhook } = gitlabWebhookModel
 
 const addHook = {
-  path: '/hook/add',
+  path: '/hook/github',
   method: 'POST',
   options: {
     validate: {
@@ -17,7 +19,7 @@ const addHook = {
       }
     },
     handler: (req, h) => {
-      return addWebhook(req.payload)
+      return addGithubWebhook(req.payload)
     }
   }
 }
@@ -69,7 +71,37 @@ const deleteHook = {
       }
     },
     handler: (req, h) => {
-      return deleteWebhook(req.params)
+      return deleteGithubWebhook(req.params)
+    }
+  }
+}
+
+const addGitlabHook = {
+  path: '/hook/gitlab',
+  method: 'POST',
+  options: {
+    validate: {
+      payload: {
+        url: Joi.string().regex(/http(s)?:\/\/.+/).required(),
+      }
+    },
+    handler: (req, h) => {
+      return addGitlabWebhook(req.payload)
+    }
+  }
+}
+
+const deleteGitlabHook = {
+  path: '/hook/gitlab/{hookId}',
+  method: 'DELETE',
+  options: {
+    validate: {
+      params: {
+        hookId: Joi.number().integer().min(1).required()
+      }
+    },
+    handler: (req, h) => {
+      return deleteGitlabWebhook(req.params.hookId)
     }
   }
 }
@@ -79,4 +111,6 @@ export default [
   updateHook,
   getHooks,
   deleteHook,
+  addGitlabHook,
+  deleteGitlabHook,
 ]
