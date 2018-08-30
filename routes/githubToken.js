@@ -2,7 +2,7 @@ import Joi from 'joi'
 import Boom from 'boom'
 import tokenModel from '../githubModels/token'
 
-const { createToken, getAccessToken } = tokenModel
+const { createToken, getGithubAccessToken, getGitlabAccessToken } = tokenModel
 
 const addToken = {
   path: '/token/add',
@@ -21,16 +21,19 @@ const addToken = {
 }
 
 const getToken = {
-  path: '/token/{code}',
+  path: '/token/{type}/{code}',
   method: 'GET',
   options: {
     validate: {
       params: {
+        type: Joi.string().regex(/^git(hub|lab)$/).required(),
         code: Joi.string().min(1).required()
       }
     },
     handler: (req, h) => {
-      return getAccessToken(req.params.code)
+      const { type, code } = req.params
+
+      return type === 'github' ? getGithubAccessToken(code) : getGitlabAccessToken(code)
     }
   }
 }

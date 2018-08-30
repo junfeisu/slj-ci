@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const host = 'https://api.github.com'
-// let token = 'c953aa2c6a22f53a8474780f79bcb0095d51c103'
+const githubAPI = 'https://api.github.com'
+const gitlabAPI = 'https://gitlab.com/api/v4'
 let token = ''
 
 export function updateToken (newToken) {
@@ -10,7 +10,18 @@ export function updateToken (newToken) {
   }
 }
 
-const fetch = ({url = '', method = 'GET', data = {}, params = {}, auth = null}) => {
+const fetch = ({
+  host,
+  url = '',
+  method = 'GET',
+  data = {},
+  params = {},
+  auth = null,
+  type = 'github'
+}) => {
+  if (!host) {
+    host = type === 'github' ? githubAPI : gitlabAPI
+  }
   return new Promise((resolve, reject) => {
     axios.request({
       url: host + url,
@@ -18,7 +29,7 @@ const fetch = ({url = '', method = 'GET', data = {}, params = {}, auth = null}) 
       data,
       params,
       headers: {
-        Authorization: 'token ' + token
+        Authorization: type === 'github' ? 'Bearer ' + token : 'token ' + token
       },
       auth
     }).then(response => {
