@@ -1,4 +1,4 @@
-import fetch, { updateToken } from '../../utils/request/fetch'
+import fetch, { updateToken } from '../../utils/request/githubFetch'
 import getBoomErrWay from '../../utils/request/errorTable'
 import githubConf from '../../config/githubConf.json'
 import userModel from './user'
@@ -26,7 +26,7 @@ const getGithubAccessToken = (code) => {
         accessToken = $token
       })
       updateToken(accessToken)
-      getGithubUser(resolve, reject)
+      getGithubUser(resolve, reject, accessToken)
     }).catch(err => {
       const { response } = err
       

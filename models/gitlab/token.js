@@ -1,4 +1,4 @@
-import fetch, { updateToken } from '../../utils/request/fetch'
+import fetch, { updateToken } from '../../utils/request/gitlabFetch'
 import getBoomErrWay from '../../utils/request/errorTable'
 import gitlabConf from '../../config/gitlabConf.json'
 import userModel from './user'
@@ -19,10 +19,11 @@ const getGitlabAccessToken = (code) => {
         code,
         grant_type: 'authorization_code',
         redirect_uri: 'http://localhost:8000'
-      }
+      },
+      type: 'gitlab'
     }).then(res => {
       updateToken(res.data.access_token)
-      getGitlabUser(resolve, reject)
+      getGitlabUser(resolve, reject, res.data.access_token)
     }).catch(err => {
       const { response } = err.err
 

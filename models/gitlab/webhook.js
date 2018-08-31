@@ -1,4 +1,4 @@
-import fetch from '../../utils/request/fetch'
+import fetch from '../../utils/request/gitlabFetch'
 import getBoomErrWay from '../../utils/request/errorTable'
 
 const addGitlabWebhook = (payload) => {

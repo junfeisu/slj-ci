@@ -1,4 +1,4 @@
-import fetch from '../../utils/request/fetch'
+import fetch from '../../utils/request/githubFetch'
 import getBoomErrWay from '../../utils/request/errorTable'
 
 const addGithubWebhook = (payload) => {

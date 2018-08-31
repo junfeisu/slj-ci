@@ -23,8 +23,10 @@ const createGithubTable = 'create table if not exists github ('
   + 'name varchar(20) NOT NULL,'
   + 'avatar_url varchar(100) NOT NULL,'
   + 'email varchar(40),'
+  + 'access_token varchar(100),'
   + 'user int unsigned,'
-  + 'PRIMARY KEY(id)'
+  + 'PRIMARY KEY(id),'
+  + 'UNIQUE KEY(login)'
   + ')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
 
 connection.query(createGithubTable, (err, result) => {
@@ -42,8 +44,10 @@ const createGitlabTable = 'create table if not exists gitlab ('
   + 'name varchar(20) NOT NULL,'
   + 'avatar_url varchar(100) NOT NULL,'
   + 'email varchar(40),'
+  + 'access_token varchar(100),'
   + 'user int unsigned,'
-  + 'PRIMARY KEY(id)'
+  + 'PRIMARY KEY(id),'
+  + 'UNIQUE KEY(username)'
   + ')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
 
 connection.query(createGitlabTable, (err, result) => {

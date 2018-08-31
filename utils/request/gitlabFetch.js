@@ -1,6 +1,6 @@
 import axios from 'axios'
+import query from '../mysql/query'
 
-const githubAPI = 'https://api.github.com'
 const gitlabAPI = 'https://gitlab.com/api/v4'
 let token = ''
 
@@ -10,18 +10,18 @@ export function updateToken (newToken) {
   }
 }
 
-const fetch = ({
-  host,
+const fetch = async ({
+  host = gitlabAPI,
   url = '',
   method = 'GET',
   data = {},
   params = {},
-  auth = null,
-  type = 'github'
 }) => {
-  if (!host) {
-    host = type === 'github' ? githubAPI : gitlabAPI
+  if (!token) {
+    const result = await query(`select access_token from gitlab where id = ?`, ['1280736'])
+    token = result.data.access_token    
   }
+
   return new Promise((resolve, reject) => {
     axios.request({
       url: host + url,
@@ -29,9 +29,8 @@ const fetch = ({
       data,
       params,
       headers: {
-        Authorization: type === 'github' ? 'Bearer ' + token : 'token ' + token
-      },
-      auth
+        Authorization: 'Bearer ' + token
+      }
     }).then(response => {
       resolve({
         status: 1,

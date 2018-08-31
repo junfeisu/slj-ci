@@ -1,7 +1,7 @@
-import fetch from '../../utils/request/fetch'
+import fetch from '../../utils/request/gitlabFetch'
 import getBoomErrWay from '../../utils/request/errorTable'
 
-const getRepoList = () => {
+const getRepoList = (id) => {
   return new Promise((resolve, reject) => {
     fetch({
       path: `/projects/${id}/repository/tree`,
@@ -22,7 +22,12 @@ const getRepoList = () => {
 }
 
 const getSingleRepo = () => {
-  
+  return new Promise((resolve, reject) => {
+    fetch({
+      url: `/projects/${id}/repository/archive`,
+      type: 'gitlab'
+    })
+  })
 }
 
 export default {
