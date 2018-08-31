@@ -32,15 +32,9 @@ const fetch = async ({
         Authorization: 'token ' + token
       }
     }).then(response => {
-      resolve({
-        status: 1,
-        data: response.data
-      })
+      resolve(response.data)
     }).catch(err => {
-      reject({
-        status: 0,
-        err: err
-      })
+      reject(err)
     })
   })
 }

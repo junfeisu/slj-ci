@@ -1,27 +1,24 @@
 import fetch from '../../utils/request/githubFetch'
 import errorHandle from '../../utils/request/errorHandle'
-import connection from '../../utils/mysql/mysqlConnection'
+import query from '../../utils/mysql/query'
 
-const getGithubUser = (resolve, reject, token) => {
-  fetch({
-    url: '/user'
-  }).then(res => {
-    const { login, name, avatar_url, id, email } = res.data
-
-    connection.query({
-      sql: 'insert into github (id, login, name, avatar_url, email, access_token) values (?, ?, ?, ?, ?, ?)',
-      values: [id, login, name, avatar_url, email, token]
-    }, (err, result) => {
-      if (err) {
-        reject(getBoomErrWay('400')(err.message))
-        return
-      }
-
-      resolve({status: 1, data: res.data})
+const getGithubUser = async (resolve, reject, token) => {
+  try {
+    const result = await fetch({
+      url: '/user'
     })
-  }).catch(err => {
-    errorHandle(reject, err.err)
-  })
+    
+    const { login, name, avatar_url, id, email } = result
+    const sql = 'insert into github (id, login, name, avatar_url, email,'
+      + ' access_token) values (?, ?, ?, ?, ?, ?)'
+    const values = [id, login, name, avatar_url, email, token]
+
+    await query(sql, values)
+
+    resolve({status: 1, data: result})
+  } catch (err) {
+    errorHandle(reject, err)
+  }
 }
 
 export default {

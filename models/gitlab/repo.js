@@ -2,15 +2,17 @@ import fetch from '../../utils/request/gitlabFetch'
 import errorHandle from '../../utils/request/errorHandle'
 
 const getRepoList = (id) => {
-  return new Promise((resolve, reject) => {
-    fetch({
-      path: `/projects/${id}/repository/tree`,
-      type: 'gitlab'
-    }).then(res => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const result = fetch({
+        path: `/projects/${id}/repository/tree`,
+        type: 'gitlab'
+      })
 
-    }).catch(err => {
-      errorHandle(reject, err.err)
-    })
+      resolve({status: 1, data: result})
+    } catch (err) {
+      errorHandle(reject, err)
+    }
   })
 }
 
