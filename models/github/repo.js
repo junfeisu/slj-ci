@@ -1,5 +1,5 @@
 import fetch from '../../utils/request/githubFetch'
-import getBoomErrWay from '../../utils/request/errorTable'
+import errorHandle from '../../utils/request/errorHandle'
 
 const getRepoList = () => {
   return new Promise((resolve, reject) => {
@@ -8,14 +8,7 @@ const getRepoList = () => {
     }).then(res => {
       resolve({status: 1, data: res.data})
     }).catch(err => {
-      const { response } = err.err
-
-      if (!response) {
-        reject(getBoomErrWay('401')('auth failed'))
-        return
-      }
-
-      reject(getBoomErrWay(response.status)(response.data.message))
+      errorHandle(reject, err.err)
     })
   })
 }
@@ -27,14 +20,7 @@ const getUserRepoList = () => {
     }).then(res => {
       resolve({status: 1, data: res.data})
     }).catch(err => {
-      const { response } = err.err
-
-      if (!response) {
-        reject(getBoomErrWay('401')('auth failed'))
-        return
-      }
-
-      reject(getBoomErrWay(response.status)(response.data.message))
+      errorHandle(reject, err.err)
     })
   })
 }
@@ -50,14 +36,7 @@ const getOrgRepoList = (params) => {
     }).then(res => {
       resolve({status: 1, data: res.data})
     }).catch(err => {
-      const { response } = err.err
-
-      if (!response) {
-        reject(getBoomErrWay('401')('auth failed'))
-        return
-      }
-
-      reject(getBoomErrWay(response.status)(response.data.message))
+      errorHandle(reject, err.err)
     })
   })
 }
@@ -69,14 +48,7 @@ const getSingleRepo = (repo) => {
     }).then(res => {
       resolve({status: 1, data: res.data})
     }).catch(err => {
-      const { response } = err.err
-
-      if (!response) {
-        reject(getBoomErrWay('401')('auth failed'))
-        return
-      }
-
-      reject(getBoomErrWay(response.status)(response.data.message))
+      errorHandle(reject, err.err)
     })
   })
 }
@@ -89,14 +61,7 @@ const deleteSingleRepo = (repo) => {
     }).then(res => {
       resolve({status: 1, data: `delete repo ${repo} success`})
     }).catch(err => {
-      const { response } = err.err
-
-      if (!response) {
-        reject(getBoomErrWay('401')('auth failed'))
-        return
-      }
-
-      reject(getBoomErrWay(response.status)(response.data.message))
+      errorHandle(reject, err.err)
     })
   })
 }

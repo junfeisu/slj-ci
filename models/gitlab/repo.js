@@ -1,5 +1,5 @@
 import fetch from '../../utils/request/gitlabFetch'
-import getBoomErrWay from '../../utils/request/errorTable'
+import errorHandle from '../../utils/request/errorHandle'
 
 const getRepoList = (id) => {
   return new Promise((resolve, reject) => {
@@ -9,14 +9,7 @@ const getRepoList = (id) => {
     }).then(res => {
 
     }).catch(err => {
-      const { response } = err.err
-
-      if (!response) {
-        reject(getBoomErrWay('401')('auth failed'))
-        return
-      }
-
-      reject(getBoomErrWay(response.status)(response.data.message))
+      errorHandle(reject, err.err)
     })
   })
 }

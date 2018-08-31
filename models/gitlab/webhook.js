@@ -1,5 +1,5 @@
 import fetch from '../../utils/request/gitlabFetch'
-import getBoomErrWay from '../../utils/request/errorTable'
+import errorHandle from '../../utils/request/errorHandle'
 
 const addGitlabWebhook = (payload) => {
   const { url, events, enable_ssl_verification } = payload
@@ -19,14 +19,7 @@ const addGitlabWebhook = (payload) => {
   }).then(res => {
     resolve({status: 1, data: res.data})
   }).catch(err => {
-    const { response } = err.err
-
-    if (!response) {
-      reject(getBoomErrWay('401')('auth failed'))
-      return
-    }
-
-    reject(getBoomErrWay(response.status)(response.data.message))
+    errorHandle(reject, err.err)
   })
 }
 
@@ -39,14 +32,7 @@ const deleteGitlabWebhook = (hookId) => {
     }).then(res => {
       resolve({status: 1, data: 'delete webhook success'})
     }).catch(err => {
-      const { response } = err.err
-
-      if (!response) {
-        reject(getBoomErrWay('401')('auth failed'))
-        return
-      }
-
-      reject(getBoomErrWay(response.status)(response.data.message))
+      errorHandle(reject, err.err)
     })
   })
 }

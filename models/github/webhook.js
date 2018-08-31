@@ -1,5 +1,5 @@
 import fetch from '../../utils/request/githubFetch'
-import getBoomErrWay from '../../utils/request/errorTable'
+import errorHandle from '../../utils/request/errorHandle'
 
 const addGithubWebhook = (payload) => {
   const { repo, config, name, events, active } = payload
@@ -16,13 +16,7 @@ const addGithubWebhook = (payload) => {
     }).then(res => {
       resolve({status: 1, data: res.data})
     }).catch(err => {
-      const { response } = err.err
-
-      if (!response) {
-        reject(getBoomErrWay('401')('auth failed'))
-        return
-      }
-      reject(getBoomErrWay(response.status)(response.data.message))
+      errorHandle(reject, err.err)
     })
   })
 }
@@ -42,14 +36,7 @@ const updateGithubWebhook = (hookId, payload) => {
     }).then(res => {
       resolve({status: 1, data: res.data})
     }).catch(err => {
-      const { response } = err.err
-
-      if (!response) {
-        reject(getBoomErrWay('401')('auth failed'))
-        return
-      }
-
-      reject(getBoomErrWay(response.status)(response.data.message))
+      errorHandle(reject, err.err)
     })
   })
 }
@@ -61,14 +48,7 @@ const getGithubWebhooks = (repo) => {
     }).then(res => {
       resolve({status: 1, data: res.data})
     }).catch(err => {
-      const { response } = err.err
-
-      if (!response) {
-        reject(getBoomErrWay('401')('auth failed'))
-        return
-      }
-
-      reject(getBoomErrWay(response.status)(response.data.message))
+      errorHandle(reject, err.err)
     })
   })
 }
@@ -83,14 +63,7 @@ const deleteGithubWebhook = (params) => {
     }).then(res => {
       resolve({status: 1, data: 'delete webhook success'})
     }).catch(err => {
-      const { response } = err.err
-
-      if (!response) {
-        reject(getBoomErrWay('401')('auth failed'))
-        return
-      }
-
-      reject(getBoomErrWay(response.status)(response.data.message))
+      errorHandle(reject, err.err)
     })
   })
 }

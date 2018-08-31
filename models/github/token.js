@@ -1,5 +1,5 @@
 import fetch, { updateToken } from '../../utils/request/githubFetch'
-import getBoomErrWay from '../../utils/request/errorTable'
+import errorHandle from '../../utils/request/errorHandle'
 import githubConf from '../../config/githubConf.json'
 import userModel from './user'
 
@@ -28,14 +28,7 @@ const getGithubAccessToken = (code) => {
       updateToken(accessToken)
       getGithubUser(resolve, reject, accessToken)
     }).catch(err => {
-      const { response } = err
-      
-      if (!response) {
-        reject(getBoomErrWay('401')('auth failed'))
-        return
-      }
-
-      reject(getBoomErrWay(response.status)(response.data.message))
+      errorHandle(reject, err.err)
     })
   })
 }
