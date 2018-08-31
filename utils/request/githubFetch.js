@@ -15,11 +15,16 @@ const fetch = async ({
   url = '',
   method = 'GET',
   data = {},
-  params = {}
+  params = {},
+  headers = {}
 }) => {
-  if (!token) {
-    const result = await query(`select access_token from github where id = ?`, ['17267658'])
-    token = result.data.access_token    
+  if (host === githubAPI) {
+    if (!token) {
+      const result = await query(`select access_token from github where id = ?`, ['17267658'])
+      token = result[0].access_token
+    }
+
+    headers['Authorization'] = 'token ' + token
   }
 
   return new Promise((resolve, reject) => {
@@ -28,9 +33,7 @@ const fetch = async ({
       method,
       data,
       params,
-      headers: {
-        Authorization: 'token ' + token
-      }
+      headers
     }).then(response => {
       resolve(response.data)
     }).catch(err => {

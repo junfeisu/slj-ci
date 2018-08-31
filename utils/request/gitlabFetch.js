@@ -16,10 +16,15 @@ const fetch = async ({
   method = 'GET',
   data = {},
   params = {},
+  headers = {}
 }) => {
-  if (!token) {
-    const result = await query(`select access_token from gitlab where id = ?`, ['1280736'])
-    token = result.data.access_token    
+  if (host === gitlabAPI) {
+    if (!token) {
+      const result = await query(`select access_token from gitlab where id = ?`, ['1280736'])
+      token = result[0].access_token
+    }
+
+    headers['Authorization'] = 'Bearer ' + token
   }
 
   return new Promise((resolve, reject) => {
@@ -28,9 +33,7 @@ const fetch = async ({
       method,
       data,
       params,
-      headers: {
-        Authorization: 'Bearer ' + token
-      }
+      headers
     }).then(response => {
       resolve(response.data)
     }).catch(err => {

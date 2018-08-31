@@ -16,10 +16,15 @@ const getAccessToken = {
         code: Joi.string().min(1).required()
       }
     },
-    handler: (req, h) => {
-      const { type, code } = req.params
+    handler: async (req, h) => {
+      try {
+        const { type, code } = req.params
+        const result = type === 'github' ? await getGithubAccessToken(code) : await getGitlabAccessToken(code)
 
-      return type === 'github' ? getGithubAccessToken(code) : getGitlabAccessToken(code)
+        return h.response(result).header('Cookie', result.data.id)
+      } catch (err) {
+        return err
+      }
     }
   }
 }

@@ -23,8 +23,8 @@ const getGitlabAccessToken = (code) => {
         }
       })
 
-      updateToken(res.access_token)
-      getGitlabUser(resolve, reject, res.access_token)
+      updateToken(result.access_token)
+      getGitlabUser(resolve, reject, result.access_token)
     } catch (err) {
       errorHandle(reject, err)
     }

@@ -22,7 +22,7 @@ const getGithubAccessToken = (code) => {
       })
 
       let extractReg = /^access_token=(.+)/
-      let accessToken = res.split('&')[0]
+      let accessToken = result.split('&')[0]
       
       accessToken.replace(extractReg, (match, $token) => {
         accessToken = $token
