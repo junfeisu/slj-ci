@@ -18,6 +18,7 @@ const addGithubWebhook = (payload) => {
 
       resolve({status: 1, data: result})
     } catch (err) {
+      console.log(err)
       errorHandle(reject, err)
     }
   })
@@ -54,6 +55,7 @@ const getGithubWebhooks = (repo) => {
 
       resolve({status: 1, data: result})
     } catch (err) {
+      console.log(err)
       errorHandle(reject, err)
     }
   })

@@ -55,7 +55,8 @@ const getHooks = {
       }
     },
     handler: (req, h) => {
-      return getWebhooks(req.params.repo)
+      console.log(req.params.repo)
+      return getGithubWebhooks(req.params.repo)
     }
   }
 }
