@@ -13,21 +13,19 @@ const addUser = {
         password: Joi.string().min(6).required(),
       }
     },
-    handler: (req, h) => {
-      return new Promise(async (resolve, reject) => {
-        let { username, password } = req.payload
-        password = cryptic(password)
-        const addUser = 'insert into user (username, password) values (?, ?);'
-        const userParams = [username, password]
+    handler: async (req, h) => {
+      let { username, password } = req.payload
+      password = cryptic(password)
+      const addUser = 'insert into user (username, password) values (?, ?);'
+      const userParams = [username, password]
 
-        try {
-          const result = await query(addUser, userParams)
+      try {
+        const result = await query(addUser, userParams)
 
-          resolve({status: 1, data: {user_id: result.insertId, username: username}})
-        } catch (err) {
-          reject(getBoomErrWay(400)(err.message))
-        }
-      })
+        return {status: 1, data: {user_id: result.insertId, username: username}}
+      } catch (err) {
+        return getBoomErrWay(400)(err.message)
+      }
     }
   }
 }
@@ -42,23 +40,21 @@ const userLogin = {
         password: Joi.string().min(6).required()
       }
     },
-    handler: (req, h) => {
-      return new Promise(async (resolve, reject) => {
-        const searchUser = 'select user_id, username from user where username = ? and password = ?'
-        const { username, password } = req.payload
-        const values = [username, cryptic(password)]
+    handler: async (req, h) => {
+      const searchUser = 'select user_id, username from user where username = ? and password = ?'
+      const { username, password } = req.payload
+      const values = [username, cryptic(password)]
 
-        try {
-          const result = await query(searchUser, values)
-          if (!result.length) {
-            reject(getBoomErrWay('400')('username or password is not right'))
-          }
-
-          resolve({status: 1, data: result[0]})
-        } catch (err) {
-          reject(getBoomErrWay('400')(err.message))
+      try {
+        const result = await query(searchUser, values)
+        if (!result.length) {
+          return getBoomErrWay('400')('username or password is not right')
         }
-      })
+
+        return {status: 1, data: result[0]}
+      } catch (err) {
+        return getBoomErrWay('400')(err.message)
+      }
     }
   }
 }
