@@ -3,6 +3,7 @@ import webhook from './webhook'
 import repos from './repos'
 import user from './user'
 import deploy from './deploy'
+import project from './project'
 
 export default [
   authToken,
@@ -10,4 +11,5 @@ export default [
   repos,
   user,
   deploy,
+  project,
 ]

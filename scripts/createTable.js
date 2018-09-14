@@ -61,6 +61,8 @@ connection.query(createGitlabTable, (err, result) => {
 const createProjectTable = 'create table if not exists project ('
   + 'id int unsigned NOT NULL,'
   + 'repository_type varchar(20) NOT NULL,'
+  + 'user_id int unsigned,'
+  + 'CONSTRAINT user_project FOREIGN KEY(user_id) REFERENCES user(user_id) on delete cascade on update cascade,'
   + 'PRIMARY KEY(id)'
   + ')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
 
@@ -78,7 +80,7 @@ const createHistoryTable = 'create table if not exists history ('
   + 'create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,'
   + 'project_id int unsigned,'
   + 'CONSTRAINT project_history FOREIGN KEY(project_id) REFERENCES project(id) on delete cascade on update cascade,'
-  + 'PRIMARY <KEY><id></id></KEY>'
+  + 'PRIMARY KEY(id)'
   + ')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
 
 connection.query(createHistoryTable, (err, result) => {
