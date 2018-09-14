@@ -53,9 +53,40 @@ const createGitlabTable = 'create table if not exists gitlab ('
 connection.query(createGitlabTable, (err, result) => {
   if (err) {
     console.log('create table gitlab err ', err)
-    process.exit(0)
   }
 
   console.log('create table gitlab success')
-  process.exit(1)
+})
+
+const createProjectTable = 'create table if not exists project ('
+  + 'id int unsigned NOT NULL,'
+  + 'repository_type varchar(20) NOT NULL,'
+  + 'PRIMARY KEY(id)'
+  + ')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
+
+connection.query(createProjectTable, (err, result) => {
+  if (err) {
+    console.log('create table project err ', err)
+  }
+
+  console.log('create table project success')
+})
+
+const createHistoryTable = 'create table if not exists history ('
+  + 'id int unsigned NOT NULL AUTO_INCREMENT,'
+  + 'time int unsigned NOT NULL,'
+  + 'create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,'
+  + 'project_id int unsigned,'
+  + 'CONSTRAINT project_history FOREIGN KEY(project_id) REFERENCES project(id) on delete cascade on update cascade,'
+  + 'PRIMARY <KEY><id></id></KEY>'
+  + ')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
+
+connection.query(createHistoryTable, (err, result) => {
+  if (err) {
+    console.log('create table history err ', err)
+    process.exit(1)
+  }
+
+  console.log('create table history success')
+  process.exit()
 })

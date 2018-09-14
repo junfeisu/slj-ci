@@ -28,6 +28,7 @@ const fetch = async ({
   }
 
   return new Promise((resolve, reject) => {
+    console.log(url, headers)
     axios.request({
       url: host + url,
       method,

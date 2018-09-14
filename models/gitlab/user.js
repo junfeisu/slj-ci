@@ -9,11 +9,20 @@ const getGitlabUser = async (resolve, reject, token) => {
     })
 
     const { username, name, avatar_url, id, email } = result
-    const sql = 'insert into gitlab (id, username, name, avatar_url, email,'
+    const insert = 'insert into gitlab (id, username, name, avatar_url, email,'
       + ' access_token) values (?, ?, ?, ?, ?, ?)'
-    const values = [id, username, name, avatar_url, email, token]
+    const insertValues = [id, username, name, avatar_url, email, token]
+    const search = 'select * from gitlab where id=?'
+    const update = 'update gitlab set access_token=? where id=?'
+    const searchValue = [id]
+    const updateValues = [token, id]
 
-    await query(sql, values)
+    const searchResult = await query(search, searchValue)
+    if (searchResult.length) {
+      await query(update, updateValues)
+    } else {
+      await query(insert, insertValues)
+    }
     
     resolve({status: 1, data: result})    
   } catch (err) {
