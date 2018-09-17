@@ -19,9 +19,12 @@ const getAccessToken = {
     handler: async (req, h) => {
       try {
         const { type, code } = req.params
-        const result = type === 'github' ? await getGithubAccessToken(code) : await getGitlabAccessToken(code)
+        const result = type === 'github'
+          ? await getGithubAccessToken(code)
+          : await getGitlabAccessToken(code)
 
         return h.response(result).header('Cookie', result.data.id)
+        // return h.response(result).header('Set-Cookie', `userId=${result.data.id};isVisit=true;domain=http://10.232.55.210:8080;path=/`)
       } catch (err) {
         return err
       }

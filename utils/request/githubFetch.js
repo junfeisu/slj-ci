@@ -3,10 +3,17 @@ import query from '../mysql/query'
 
 const githubAPI = 'https://api.github.com'
 let token = ''
+let userId = 0
 
 export function updateToken (newToken) {
   if (newToken && newToken !== token) {
     token = newToken
+  }
+}
+
+export function updateGithubId (id) {
+  if (id && !isNaN(id) && id !== userId) {
+    userId = id
   }
 }
 
@@ -20,7 +27,7 @@ const fetch = async ({
 }) => {
   if (host === githubAPI) {
     if (!token) {
-      const result = await query(`select access_token from github where id = ?`, ['17267658'])
+      const result = await query(`select access_token from github where id = ?`, [userId])
       token = result[0].access_token
     }
 
@@ -28,7 +35,6 @@ const fetch = async ({
   }
 
   return new Promise((resolve, reject) => {
-    console.log(url, headers)
     axios.request({
       url: host + url,
       method,

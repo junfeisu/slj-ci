@@ -4,6 +4,7 @@ import routes from './routes'
 async function start () {
   try {
     await server.register(require('./plugins/socket').default)
+    await server.register(require('./plugins/interceptor').default)
 
     server.realm.modifiers.route.prefix = '/api'
     routes.forEach(route => {
