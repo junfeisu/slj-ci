@@ -15,7 +15,8 @@ const addHook = {
         name: Joi.string().min(1).required(),
         active: Joi.boolean().required(),
         events: Joi.array().required(),
-        config: Joi.object().required()
+        config: Joi.object().required(),
+        username: Joi.string().min(1).required()
       }
     },
     handler: (req, h) => {
@@ -25,7 +26,7 @@ const addHook = {
 }
 
 const updateHook = {
-  path: '/hook/update/{hookId}',
+  path: '/hook/github/update/{hookId}',
   method: 'POST',
   options: {
     validate: {
@@ -36,36 +37,39 @@ const updateHook = {
         events: Joi.array().required(),
         active: Joi.boolean().required(),
         config: Joi.object().required(),
-        repo: Joi.string().min(1).required()
+        repo: Joi.string().min(1).required(),
+        username: Joi.string().min(1).required()
       }
     },
     handler: (req, h) => {
-      return updateWebhook(req.params.hookId, req.payload)
+      return updateGithubWebhook(req.params.hookId, req.payload)
     }
   }
 }
 
 const getHooks = {
-  path: '/hook/list/{repo}',
+  path: '/hook/list/github/{username}/{repo}',
   method: 'GET',
   options: {
     validate: {
       params: {
+        username: Joi.string().min(1).required(),
         repo: Joi.string().min(1).required()
       }
     },
     handler: (req, h) => {
-      return getGithubWebhooks(req.params.repo)
+      return getGithubWebhooks(req.params)
     }
   }
 }
 
 const deleteHook = {
-  path: '/hook/{repo}/{hookId}',
+  path: '/hook/github/{username}/{repo}/{hookId}',
   method: 'DELETE',
   options: {
     validate: {
       params: {
+        username: Joi.string().min(1).required(),
         repo: Joi.string().min(1).required(),
         hookId: Joi.number().integer().min(1).required()
       }

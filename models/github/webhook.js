@@ -1,81 +1,71 @@
 import fetch from '../../utils/request/githubFetch'
 import errorHandle from '../../utils/request/errorHandle'
 
-const addGithubWebhook = (payload) => {
-  const { repo, config, name, events, active } = payload
-  return new Promise(async (resolve, reject) => {
-    try {
-      const result = await fetch({
-        url: `/repos/junfeisu/${repo}/hooks`,
-        method: 'POST',
-        data: {
-          name,
-          config,
-          events,
-          active,
-        }
-      })
+const addGithubWebhook = async (payload) => {
+  try {
+    const { repo, config, name, events, active, username } = payload
+    const result = await fetch({
+      url: `/repos/${username}/${repo}/hooks`,
+      method: 'POST',
+      data: {
+        name,
+        config,
+        events,
+        active,
+      }
+    })
 
-      resolve({status: 1, data: result})
-    } catch (err) {
-      console.log(err)
-      errorHandle(reject, err)
-    }
-  })
+    return {status: 1, data: result}
+  } catch (err) {
+    errorHandle(err)
+  }
 }
 
-const updateGithubWebhook = (hookId, payload) => {
-  const { repo, config, events, active } = payload
+const updateGithubWebhook = async (hookId, payload) => {
+  try {
+    const { repo, config, events, active, username } = payload
+    const result = await fetch({
+      url: `/repos/${username}/${repo}/hooks/${hookId}`,
+      method: 'PATCH',
+      data: {
+        config,
+        events,
+        active
+      }
+    })
 
-  return new Promise(async (resolve, reject) => {
-    try {
-      const result = await fetch({
-        url: `/repos/junfeisu/${repo}/hooks/${hookId}`,
-        method: 'PATCH',
-        data: {
-          config,
-          events,
-          active
-        }
-      })
-
-      resolve({status: 1, data: result})
-    } catch (err) {
-      errorHandle(reject, err)
-    }
-  })
+    return {status: 1, data: result}
+  } catch (err) {
+    errorHandle(err)
+  }
 }
 
-const getGithubWebhooks = (repo) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const result = await fetch({
-        url: `/repos/junfeisu/${repo}/hooks`
-      })
+const getGithubWebhooks = async (repo) => {
+  try {
+    const { username, repo } = req.params
+    const result = await fetch({
+      url: `/repos/${username}/${repo}/hooks`
+    })
 
-      resolve({status: 1, data: result})
-    } catch (err) {
-      console.log(err)
-      errorHandle(reject, err)
-    }
-  })
+    return {status: 1, data: result}
+  } catch (err) {
+    errorHandle(err)
+  }
 }
 
-const deleteGithubWebhook = (params) => {
-  const { hookId, repo } = params
+const deleteGithubWebhook = async (params) => {
+  const { username, hookId, repo } = params
 
-  return new Promise(async (resolve, reject) => {
-    try {
-      const result = await fetch({
-        url: `/repos/junfeisu/${repo}/hooks/${hookId}`,
-        method: 'DELETE'
-      })
+  try {
+    const result = await fetch({
+      url: `/repos/${username}/${repo}/hooks/${hookId}`,
+      method: 'DELETE'
+    })
 
-      resolve({status: 1, data: 'delete webhook success'})
-    } catch (err) {
-      errorHandle(reject, err)
-    }
-  })
+    return {status: 1, data: 'delete webhook success'}
+  } catch (err) {
+    errorHandle(err)
+  }
 }
 
 export default {

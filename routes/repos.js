@@ -10,7 +10,7 @@ const {
 } = repoModel
 
 const getRepos = {
-  path: '/repos',
+  path: '/repos/github',
   method: 'GET',
   options: {
     handler: (req, h) => {
@@ -20,11 +20,11 @@ const getRepos = {
 }
 
 const getUserRepos = {
-  path: '/repos/user',
+  path: '/repos/github/{username}',
   method: 'GET',
   options: {
     handler: (req, h) => {
-      return getUserRepoList()
+      return getUserRepoList(req.params.username)
     }
   }
 }
@@ -46,31 +46,17 @@ const getOrgRepos = {
 }
 
 const getRepo = {
-  path: '/repos/{repo}',
+  path: '/repos/github/{username}/{repo}',
   method: 'GET',
   options: {
     validate: {
       params: {
+        username: Joi.string().min(1).required(),
         repo: Joi.string().min(1).required()
       }
     },
     handler: (req, h) => {
-      return getSingleRepo(req.params.repo)
-    }
-  }
-}
-
-const deleteRepo = {
-  path: '/repos/{repo}',
-  method: 'DELETE',
-  options: {
-    validate: {
-      params: {
-        repo: Joi.string().min(1).required()
-      }
-    },
-    handler: (req, h) => {
-      return deleteSingleRepo(req.params.repo)
+      return getSingleRepo(req.params)
     }
   }
 }

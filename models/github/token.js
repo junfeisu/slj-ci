@@ -5,34 +5,32 @@ import userModel from './user'
 
 const { getGithubUser } = userModel
 
-const getGithubAccessToken = (code) => {
+const getGithubAccessToken = async (code) => {
   const { client_id, client_secret } = githubConf.appInfo
 
-  return new Promise(async (resolve, reject) => {
-    try {
-      const result = await fetch({
-        host: 'https://github.com',
-        url: '/login/oauth/access_token',
-        method: 'POST',
-        data: {
-          client_id,
-          client_secret,
-          code
-        }
-      })
+  try {
+    const result = await fetch({
+      host: 'https://github.com',
+      url: '/login/oauth/access_token',
+      method: 'POST',
+      data: {
+        client_id,
+        client_secret,
+        code
+      }
+    })
 
-      let extractReg = /^access_token=(.+)/
-      let accessToken = result.split('&')[0]
-      
-      accessToken.replace(extractReg, (match, $token) => {
-        accessToken = $token
-      })
-      updateToken(accessToken)
-      getGithubUser(resolve, reject, accessToken)
-    } catch (err) {
-      errorHandle(reject, err)
-    }
-  })
+    let extractReg = /^access_token=(.+)/
+    let accessToken = result.split('&')[0]
+    
+    accessToken.replace(extractReg, (match, $token) => {
+      accessToken = $token
+    })
+    updateToken(accessToken)
+    return getGithubUser(accessToken)
+  } catch (err) {
+    errorHandle(err)
+  }
 }
 
 export default {

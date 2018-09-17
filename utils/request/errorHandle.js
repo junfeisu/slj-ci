@@ -4,11 +4,10 @@ const errorHanlder = (reject, err) => {
   const { response } = err
 
   if (!response) {
-    reject(getBoomErrWay('401')('auth failed'))
-    return
+    return getBoomErrWay('401')('auth failed')
   }
 
-  reject(getBoomErrWay(response.status)(response.data.message))
+  return getBoomErrWay(response.status)(response.data.message)
 }
 
 export default errorHanlder

@@ -5,30 +5,27 @@ import userModel from './user'
 
 const { getGitlabUser } = userModel
 
-const getGitlabAccessToken = (code) => {
-  const { client_id, client_secret } = gitlabConf.appInfo
+const getGitlabAccessToken = async (code) => {
+  try {
+    const { client_id, client_secret } = gitlabConf.appInfo
+    const result = await fetch({
+      host: 'https://gitlab.com',
+      url: '/oauth/token',
+      method: 'POST',
+      data: {
+        client_id,
+        client_secret,
+        code,
+        grant_type: 'authorization_code',
+        redirect_uri: 'http://localhost:8080/code'
+      }
+    })
 
-  return new Promise(async (resolve, reject) => {
-    try {
-      const result = await fetch({
-        host: 'https://gitlab.com',
-        url: '/oauth/token',
-        method: 'POST',
-        data: {
-          client_id,
-          client_secret,
-          code,
-          grant_type: 'authorization_code',
-          redirect_uri: 'http://localhost:8080/code'
-        }
-      })
-
-      updateToken(result.access_token)
-      getGitlabUser(resolve, reject, result.access_token)
-    } catch (err) {
-      errorHandle(reject, err)
-    }
-  })
+    updateToken(result.access_token)
+    return getGitlabUser(result.access_token)
+  } catch (err) {
+    errorHandle(err)
+  }
 }
 
 export default {

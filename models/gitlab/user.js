@@ -2,7 +2,7 @@ import fetch from '../../utils/request/gitlabFetch'
 import errorHandle from '../../utils/request/errorHandle'
 import query from '../../utils/mysql/query'
 
-const getGitlabUser = async (resolve, reject, token) => {
+const getGitlabUser = async (token) => {
   try {
     const result = await fetch({
       url: '/user'
@@ -24,9 +24,9 @@ const getGitlabUser = async (resolve, reject, token) => {
       await query(insert, insertValues)
     }
     
-    resolve({status: 1, data: result})    
+    return {status: 1, data: result}
   } catch (err) {
-    errorHandle(reject, err)
+    errorHandle(err)
   }
 }
 

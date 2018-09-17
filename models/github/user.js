@@ -2,7 +2,7 @@ import fetch from '../../utils/request/githubFetch'
 import errorHandle from '../../utils/request/errorHandle'
 import query from '../../utils/mysql/query'
 
-const getGithubUser = async (resolve, reject, token) => {
+const getGithubUser = async (token) => {
   try {
     const result = await fetch({
       url: '/user'
@@ -24,9 +24,9 @@ const getGithubUser = async (resolve, reject, token) => {
       await query(insert, insertValues)
     }
 
-    resolve({status: 1, data: result})
+    return {status: 1, data: result}
   } catch (err) {
-    errorHandle(reject, err)
+    errorHandle(err)
   }
 }
 

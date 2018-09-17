@@ -1,79 +1,57 @@
 import fetch from '../../utils/request/githubFetch'
 import errorHandle from '../../utils/request/errorHandle'
 
-const getRepoList = () => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const result = await fetch({
-        url: '/user/repos'
-      })
+const getRepoList = async () => {
+  try {
+    const result = await fetch({
+      url: '/user/repos'
+    })
 
-      resolve({status: 1, data: result})
-    } catch (err) {
-      errorHandle(reject, err)
-    }
-  })
+    return {status: 1, data: result}
+  } catch (err) {
+    errorHandle(err)
+  }
 }
 
-const getUserRepoList = () => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const result = await fetch({
-        url: '/users/junfeisu/repos'
-      })
+const getUserRepoList = async (username) => {
+  try {
+    const result = await fetch({
+      url: `/users/${username}/repos`
+    })
 
-      resolve({status: 1, data: result})
-    } catch (err) {
-      errorHandle(reject, err)
-    }
-  })
+    return {status: 1, data: result}
+  } catch (err) {
+    errorHandle(err)
+  }
 }
 
-const getOrgRepoList = (params) => {
+const getOrgRepoList = async (params) => {
   const { org, type } = params
-  return new Promise(async (resolve, reject) => {
-    try {
-      const result = await fetch({
-        url: `/orgs/${org}/repos`,
-        params: {
-          type
-        }
-      })
+  try {
+    const result = await fetch({
+      url: `/orgs/${org}/repos`,
+      params: {
+        type
+      }
+    })
 
-      resolve({status: 1, data: result})
-    } catch (err) {
-      errorHandle(reject, err)
-    }
-  })
+    return {status: 1, data: result}
+  } catch (err) {
+    errorHandle(err)
+  }
 }
 
-const getSingleRepo = (repo) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const result = await fetch({
-        url: `/repos/junfeisu/${repo}`
-      })
+const getSingleRepo = async (params) => {
+  const { username, repo } = params
+  try {
+    const result = await fetch({
+      url: `/repos/${username}/${repo}`
+    })
 
-      resolve({status: 1, data: result})
-    } catch (err) {
-      errorHandle(reject, err)
-    }
-  })
-}
-
-const deleteSingleRepo = (repo) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      await fetch({
-        url: `/repos/junfeisu/${repo}`,
-        method: 'DELETE'
-      })
-
-      resolve({status: 1, data: `delete repo ${repo} success`})
-    } catch (err) {
-      errorHandle(reject, err)
-    }
-  })
+    return {status: 1, data: result}
+  } catch (err) {
+    errorHandle(err)
+  }
 }
 
 export default {
@@ -81,5 +59,4 @@ export default {
   getUserRepoList,
   getOrgRepoList,
   getSingleRepo,
-  deleteSingleRepo
 }
