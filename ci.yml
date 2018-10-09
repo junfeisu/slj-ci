@@ -12,9 +12,6 @@ branches:
 before_install:
   - npm install
 
-before_script:
-  console.log('before_script')
-
 script:
   - npm run test
 

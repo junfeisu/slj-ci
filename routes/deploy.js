@@ -12,9 +12,6 @@ const webhookDeploy = {
         console.log(req.body.commits)
       }
     })
-    // exec('git pull origin dev', {'cwd': '/home/sjffly/p'})
-    const ciYaml = parse(path.resolve(process.env.PWD, './ci.yml'))
-    console.log(ciYaml)
   }
 }
 
