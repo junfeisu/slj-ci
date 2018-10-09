@@ -1,11 +1,10 @@
 import fetch from '../../utils/request/gitlabFetch'
 import errorHandle from '../../utils/request/errorHandle'
 
-const getRepoList = async (id) => {
+const getGitlabRepoList = async () => {
   try {
     const result = await fetch({
-      path: `/projects/${id}/repository/tree`,
-      type: 'gitlab'
+      url: '/projects',
     })
 
     return {status: 1, data: result}
@@ -15,5 +14,5 @@ const getRepoList = async (id) => {
 }
 
 export default {
-  getRepoList,
+  getGitlabRepoList,
 }

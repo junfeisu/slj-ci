@@ -17,7 +17,7 @@ const getGitlabAccessToken = async (code) => {
         client_secret,
         code,
         grant_type: 'authorization_code',
-        redirect_uri: 'http://localhost:8080/code'
+        redirect_uri: 'http://10.232.55.210:8080/code'
       }
     })
 

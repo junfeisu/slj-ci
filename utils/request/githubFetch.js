@@ -27,7 +27,6 @@ const fetch = async ({
 }) => {
   if (host === githubAPI) {
     if (!token) {
-      console.log(userId)
       const result = await query(`select access_token from github where id = ?`, [userId])
       token = result[0].access_token
     }
@@ -45,7 +44,6 @@ const fetch = async ({
     }).then(response => {
       resolve(response.data)
     }).catch(err => {
-      reject(err)
     })
   })
 }

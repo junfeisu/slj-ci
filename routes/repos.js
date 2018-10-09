@@ -1,5 +1,6 @@
 import Joi from 'joi'
-import repoModel from '../models/github/repo'
+import githubRepoModel from '../models/github/repo'
+import gitlabRepoModel from '../models/gitlab/repo'
 
 const {
   getRepoList,
@@ -7,14 +8,17 @@ const {
   getOrgRepoList,
   getSingleRepo,
   deleteSingleRepo
-} = repoModel
+} = githubRepoModel
+
+const { getGitlabRepoList } = gitlabRepoModel
 
 const getRepos = {
-  path: '/repos/github',
+  path: '/repos/{type}',
   method: 'GET',
   options: {
     handler: (req, h) => {
-      return getRepoList()
+      const { type } = req.params
+      return type === 'github' ? getRepoList() : getGitlabRepoList()
     }
   }
 }

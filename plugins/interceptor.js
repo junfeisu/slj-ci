@@ -10,10 +10,11 @@ const interceptorPlugin = {
         type = match
       })
 
-      if (type) {
+      if (type && req.headers['man-cookie']) {
         let userId = req.headers['man-cookie'].split('=')[1]
         type === 'github' ? updateGithubId(userId) : updateGitlabId(userId)
       }
+      
       return h.continue
     })
   }
