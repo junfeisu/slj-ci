@@ -50,8 +50,8 @@ const runScriptsByOrder = () => {
   execScript(commandName, commandComponents)
 }
 
-const execScript = async (commandName, options) => {
-  const rs = await spawn(commandName, options)
+const execScript = async (commandName, args) => {
+  const rs = spawn(commandName, args)
 
   rs.stdout.on('data', data => {
     console.log(data.toString())
