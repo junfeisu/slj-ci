@@ -10,7 +10,7 @@ const {
   deleteSingleRepo
 } = githubRepoModel
 
-const { getGitlabRepoList } = gitlabRepoModel
+const { getGitlabRepoList, getGitlabUserRepoList, getGitlabSingleRepo } = gitlabRepoModel
 
 const getRepos = {
   path: '/repos/{type}',
@@ -23,12 +23,16 @@ const getRepos = {
   }
 }
 
+/*
+ @user githubAPI need username | gitlanAPI need user id
+ */
 const getUserRepos = {
-  path: '/repos/github/{username}',
+  path: '/repos/github/{type}/{user}',
   method: 'GET',
   options: {
     handler: (req, h) => {
-      return getUserRepoList(req.params.username)
+      const { type, user } = req.params
+      return type === 'github' ? getUserRepoList(user) : getGitlabUserRepoList(user)
     }
   }
 }
@@ -48,19 +52,18 @@ const getOrgRepos = {
     }
   }
 }
-
+/*
+ @type distinguish the github and gitlab
+ @user githubAPI need username | gitlabAPI don't need
+ @repo githubAPI need repo name | gitlanAPI need repo id
+ */
 const getRepo = {
-  path: '/repos/github/{username}/{repo}',
+  path: '/repos/{type}/{user}/{repo}',
   method: 'GET',
   options: {
-    validate: {
-      params: {
-        username: Joi.string().min(1).required(),
-        repo: Joi.string().min(1).required()
-      }
-    },
     handler: (req, h) => {
-      return getSingleRepo(req.params)
+      const { type } = req.params
+      return type === 'github' ? getSingleRepo(req.params) : getGitlabSingleRepo(req.params)
     }
   }
 }

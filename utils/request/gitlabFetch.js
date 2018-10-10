@@ -28,7 +28,9 @@ const fetch = async ({
   if (host === gitlabAPI) {
     if (!token) {
       const result = await query(`select access_token from gitlab where id = ?`, [userId])
-      token = result[0].access_token
+      if (result.length) {
+        token = result[0].access_token
+      }
     }
 
     headers['Authorization'] = 'Bearer ' + token

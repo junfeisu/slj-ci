@@ -28,7 +28,9 @@ const fetch = async ({
   if (host === githubAPI) {
     if (!token) {
       const result = await query(`select access_token from github where id = ?`, [userId])
-      token = result[0].access_token
+      if (result.length) {
+        token = result[0].access_token
+      }
     }
 
     headers['Authorization'] = 'token ' + token

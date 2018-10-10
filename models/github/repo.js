@@ -42,10 +42,12 @@ const getOrgRepoList = async (params) => {
 }
 
 const getSingleRepo = async (params) => {
-  const { username, repo } = params
+  // user param is the username
+  // repo param is the repo name
+  const { user, repo } = params
   try {
     const result = await fetch({
-      url: `/repos/${username}/${repo}`
+      url: `/repos/${user}/${repo}`
     })
 
     return {status: 1, data: result}
