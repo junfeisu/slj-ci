@@ -2,6 +2,33 @@ import Joi from 'joi'
 import getBoomErrWay from '../utils/request/errorTable'
 import query from '../utils/mysql/query'
 
+const addProject = {
+  path: '/project/add',
+  method: 'POST',
+  options: {
+    validate: {
+      payload: {
+        repository_id: Joi.number().integer().min(1).required(),
+        repository_type: Joi.string().regex(/^git(hub|lab)$/).required(),
+        user_id: Joi.number().integer().min(1).required()
+      }
+    },
+    handler: async (req, h) => {
+      try {
+        const { user_id, repository_id, repository_type } = req.payload
+        const sql = 'insert into project (repository_id, repository_type, user_id) values (?, ?, ?);'
+        const params = [repository_id, repository_type, user_id]
+
+        const result = await query(sql, params)
+
+        return {status: 1, data: {id: result.insertId, user_id: user_id, repository_id: repository_id}}
+      } catch (err) {
+        return getBoomErrWay(400)(err.message)
+      }
+    }
+  }
+}
+
 const getProjects = {
   path: '/projects/{userId}/{type}',
   method: 'GET',
@@ -52,6 +79,7 @@ const getSingleProject = {
 }
 
 export default [
+  addProject,
   getProjects,
   getSingleProject,
 ]

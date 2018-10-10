@@ -1,22 +1,18 @@
 import fetch from '../../utils/request/gitlabFetch'
 import errorHandle from '../../utils/request/errorHandle'
 
-const getGitlabRepoList = async () => {
-  try {
-    const result = await fetch({
-      url: '/projects',
-    })
-
-    return {status: 1, data: result}
-  } catch (err) {
-    errorHandle(err)
-  }
-}
-
 const getGitlabUserRepoList = async (user_id) => {
   try {
     const result = await fetch({
-      url: `/users/${user_id}/projects`
+      url: `/users/${user_id}/projects?owned=false`
+    })
+
+    result.forEach(val => {
+      val.owner = {
+        name: val.owner.username,
+        id: val.owner.id,
+        avatar_url: val.owner.avatar_url
+      }
     })
 
     return {status: 1, data: result}
@@ -38,7 +34,6 @@ const getSingleGitlabRepo = async (params) => {
 }
 
 export default {
-  getGitlabRepoList,
   getGitlabUserRepoList,
   getSingleGitlabRepo,
 }

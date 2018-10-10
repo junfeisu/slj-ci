@@ -1,24 +1,20 @@
 import fetch from '../../utils/request/githubFetch'
 import errorHandle from '../../utils/request/errorHandle'
 
-const getRepoList = async () => {
-  try {
-    const result = await fetch({
-      url: '/user/repos'
-    })
-
-    return {status: 1, data: result}
-  } catch (err) {
-    errorHandle(err)
-  }
-}
-
 const getUserRepoList = async (username) => {
   try {
     const result = await fetch({
-      url: `/users/${username}/repos`
+      url: `/users/${username}/repos?type=all`
     })
 
+    result.forEach(val => {
+      val.owner = {
+        name: val.owner.login,
+        id: val.owner.id,
+        avatar_url: val.owner.avatar_url
+      }
+    })
+    
     return {status: 1, data: result}
   } catch (err) {
     errorHandle(err)
@@ -57,7 +53,6 @@ const getSingleRepo = async (params) => {
 }
 
 export default {
-  getRepoList,
   getUserRepoList,
   getOrgRepoList,
   getSingleRepo,

@@ -3,31 +3,19 @@ import githubRepoModel from '../models/github/repo'
 import gitlabRepoModel from '../models/gitlab/repo'
 
 const {
-  getRepoList,
   getUserRepoList,
   getOrgRepoList,
   getSingleRepo,
   deleteSingleRepo
 } = githubRepoModel
 
-const { getGitlabRepoList, getGitlabUserRepoList, getGitlabSingleRepo } = gitlabRepoModel
-
-const getRepos = {
-  path: '/repos/{type}',
-  method: 'GET',
-  options: {
-    handler: (req, h) => {
-      const { type } = req.params
-      return type === 'github' ? getRepoList() : getGitlabRepoList()
-    }
-  }
-}
+const { getGitlabUserRepoList, getGitlabSingleRepo } = gitlabRepoModel
 
 /*
- @user githubAPI need username | gitlanAPI need user id
+ @user githubAPI need username | gitlabAPI need user id
  */
 const getUserRepos = {
-  path: '/repos/github/{type}/{user}',
+  path: '/repos/users/{type}/{user}',
   method: 'GET',
   options: {
     handler: (req, h) => {
@@ -52,10 +40,11 @@ const getOrgRepos = {
     }
   }
 }
+
 /*
  @type distinguish the github and gitlab
  @user githubAPI need username | gitlabAPI don't need
- @repo githubAPI need repo name | gitlanAPI need repo id
+ @repo githubAPI need repo name | gitlabAPI need repo id
  */
 const getRepo = {
   path: '/repos/{type}/{user}/{repo}',
@@ -69,7 +58,6 @@ const getRepo = {
 }
 
 export default [
-  getRepos,
   getUserRepos,
   getOrgRepos,
   getRepo,

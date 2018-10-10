@@ -59,10 +59,10 @@ connection.query(createGitlabTable, (err, result) => {
 })
 
 const createProjectTable = 'create table if not exists project ('
-  + 'id int unsigned NOT NULL,'
+  + 'id int unsigned NOT NULL AUTO_INCREMENT,'
+  + 'repository_id int unsigned NOT NULL,'
   + 'repository_type varchar(20) NOT NULL,'
   + 'user_id int unsigned,'
-  + 'CONSTRAINT user_project FOREIGN KEY(user_id) REFERENCES user(user_id) on delete cascade on update cascade,'
   + 'PRIMARY KEY(id)'
   + ')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
 
