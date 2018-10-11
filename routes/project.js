@@ -8,6 +8,7 @@ const addProject = {
   options: {
     validate: {
       payload: {
+        name: Joi.string().min(1).max(20).required(),
         repository_id: Joi.number().integer().min(1).required(),
         repository_type: Joi.string().regex(/^git(hub|lab)$/).required(),
         user_id: Joi.number().integer().min(1).required()
@@ -15,13 +16,13 @@ const addProject = {
     },
     handler: async (req, h) => {
       try {
-        const { user_id, repository_id, repository_type } = req.payload
-        const sql = 'insert into project (repository_id, repository_type, user_id) values (?, ?, ?);'
-        const params = [repository_id, repository_type, user_id]
+        const { name, user_id, repository_id, repository_type } = req.payload
+        const sql = 'insert into project (name, repository_id, repository_type, user_id) values (?, ?, ?, ?);'
+        const params = [name, repository_id, repository_type, user_id]
 
         const result = await query(sql, params)
 
-        return {status: 1, data: {id: result.insertId, user_id: user_id, repository_id: repository_id}}
+        return {status: 1, data: {id: result.insertId}}
       } catch (err) {
         return getBoomErrWay(400)(err.message)
       }

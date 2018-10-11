@@ -1,10 +1,12 @@
 const connection = require('../utils/mysql/mysqlConnection').default
 
 const createUserTable = 'create table if not exists user ('
-  + 'user_id int unsigned NOT NULL AUTO_INCREMENT,'
-  + 'username varchar(20) NOT NULL,'
-  + 'password varchar(40) NOT NULL,'
-  + 'PRIMARY KEY(user_id),'
+  + 'id int unsigned NOT NULL AUTO_INCREMENT,'
+  + 'username varchar(20),'
+  + 'password varchar(40),'
+  + 'github_id int unsigned,'
+  + 'gitlab_id int unsigned,'
+  + 'PRIMARY KEY(id),'
   + 'UNIQUE KEY(username)'
   + ')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
 
@@ -19,14 +21,12 @@ connection.query(createUserTable, (err, result) => {
 
 const createGithubTable = 'create table if not exists github ('
   + 'id int unsigned NOT NULL,'
-  + 'login varchar(20) NOT NULL,'
+  + 'username varchar(20) NOT NULL,'
   + 'name varchar(20) NOT NULL,'
   + 'avatar_url varchar(100) NOT NULL,'
   + 'email varchar(40),'
   + 'access_token varchar(100),'
-  + 'user int unsigned,'
-  + 'PRIMARY KEY(id),'
-  + 'UNIQUE KEY(login)'
+  + 'PRIMARY KEY(id)'
   + ')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
 
 connection.query(createGithubTable, (err, result) => {
@@ -45,9 +45,7 @@ const createGitlabTable = 'create table if not exists gitlab ('
   + 'avatar_url varchar(100) NOT NULL,'
   + 'email varchar(40),'
   + 'access_token varchar(100),'
-  + 'user int unsigned,'
-  + 'PRIMARY KEY(id),'
-  + 'UNIQUE KEY(username)'
+  + 'PRIMARY KEY(id)'
   + ')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
 
 connection.query(createGitlabTable, (err, result) => {
@@ -60,10 +58,13 @@ connection.query(createGitlabTable, (err, result) => {
 
 const createProjectTable = 'create table if not exists project ('
   + 'id int unsigned NOT NULL AUTO_INCREMENT,'
+  + 'name varchar(20) NOT NULL,'
   + 'repository_id int unsigned NOT NULL,'
   + 'repository_type varchar(20) NOT NULL,'
   + 'user_id int unsigned,'
-  + 'PRIMARY KEY(id)'
+  + 'PRIMARY KEY(id),'
+  + 'CONSTRAINT project_user FOREIGN KEY(user_id) REFERENCES user(id),'
+  + 'UNIQUE (name)'
   + ')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
 
 connection.query(createProjectTable, (err, result) => {
@@ -76,9 +77,15 @@ connection.query(createProjectTable, (err, result) => {
 
 const createHistoryTable = 'create table if not exists history ('
   + 'id int unsigned NOT NULL AUTO_INCREMENT,'
-  + 'time int unsigned NOT NULL,'
   + 'create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,'
+  + 'end_time timestamp DEFAULT CURRENT_TIMESTAMP,'
   + 'project_id int unsigned,'
+  + 'trigger_user_name varchar(20) NOT NULL,'
+  + 'trigger_way varchar(10) NOT NULL,'
+  + 'branch varchar(20) NOT NULL,'
+  + 'commit_id varchar(10) NOT NULL,'
+  + 'commit_message varchar(50),'
+  + 'status tinyint(1) DEFAULT NULL,'
   + 'CONSTRAINT project_history FOREIGN KEY(project_id) REFERENCES project(id) on delete cascade on update cascade,'
   + 'PRIMARY KEY(id)'
   + ')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
