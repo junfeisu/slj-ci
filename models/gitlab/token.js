@@ -22,6 +22,7 @@ const getGitlabAccessToken = async (code, userId) => {
     })
 
     updateToken(result.access_token)
+    
     return getGitlabUser(result.access_token, userId)
   } catch (err) {
     errorHandle(err)

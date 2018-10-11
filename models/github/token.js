@@ -27,6 +27,8 @@ const getGithubAccessToken = async (code, userId) => {
       accessToken = $token
     })
     updateToken(accessToken)
+
+    // to get and update the user info
     return getGithubUser(accessToken, userId)
   } catch (err) {
     errorHandle(err)

@@ -16,16 +16,19 @@ const getGithubUser = async (token, userId) => {
     const insertUser = 'insert into user (github_id) values (?)'
     const githubValues = [id, login, name, avatar_url, email, token]
 
+    // user is not logging in for the first time
     if (userId) {
       const searchGithub = 'select github_id from user where id = ?'
       const searchResult = await query(searchGithub, [userId])
 
+      // user has authed gitlab
       if (searchResult[0].github_id) {
-        const updateGithub = 'update github set access_token=? where id=?'
+        const updateGithub = 'update github set access_token = ? where id = ?'
         const updateGithubValues = [token, id]
         
         await query(updateGithub, updateGithubValues)
       } else {
+        // user does not auth the gitlab
         const updateUser = 'update user set github_id = ? where id = ?'
         const updateUserValues = [id, userId]
 
@@ -33,12 +36,14 @@ const getGithubUser = async (token, userId) => {
         await query(insertGithub, githubValues)
       }
     } else {
+      // This is a new user
       const newUser = await query(insertUser, [id])
       await query(insertGithub, githubValues)
       
       userId = newUser.insertId
     }
 
+    // add the authorization token
     let userToken = generateToken(userId)
 
     return {status: 1, data: {id: userId, token: userToken, githubUser: result}}
