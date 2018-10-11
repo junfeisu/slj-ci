@@ -5,7 +5,7 @@ import userModel from './user'
 
 const { getGithubUser } = userModel
 
-const getGithubAccessToken = async (code) => {
+const getGithubAccessToken = async (code, userId) => {
   const { client_id, client_secret } = githubConf.appInfo
 
   try {
@@ -27,7 +27,7 @@ const getGithubAccessToken = async (code) => {
       accessToken = $token
     })
     updateToken(accessToken)
-    return getGithubUser(accessToken)
+    return getGithubUser(accessToken, userId)
   } catch (err) {
     errorHandle(err)
   }

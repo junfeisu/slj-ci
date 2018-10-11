@@ -2,7 +2,7 @@ import fetch from '../../utils/request/gitlabFetch'
 import errorHandle from '../../utils/request/errorHandle'
 import query from '../../utils/mysql/query'
 
-const getGitlabUser = async (token) => {
+const getGitlabUser = async (token, userId) => {
   try {
     const result = await fetch({
       url: '/user'
@@ -11,20 +11,33 @@ const getGitlabUser = async (token) => {
     const { username, name, avatar_url, id, email } = result
     const insert = 'insert into gitlab (id, username, name, avatar_url, email,'
       + ' access_token) values (?, ?, ?, ?, ?, ?)'
-    const insertValues = [id, username, name, avatar_url, email, token]
-    const search = 'select * from gitlab where id=?'
-    const update = 'update gitlab set access_token=? where id=?'
-    const searchValue = [id]
-    const updateValues = [token, id]
+    const gitlabValues = [id, username, name, avatar_url, email, token]
+    const insertUser = 'insert into user (gitlab_id) values (?)'
 
-    const searchResult = await query(search, searchValue)
-    if (searchResult.length) {
-      await query(update, updateValues)
+    if (userId) {
+      const searchGitlab = 'select gitlab_id from user where id = ?'
+      const searchResult = await query(searchGitlab, [userId])
+
+      if (searchResult[0].gitlab_id) {
+        const updateGitlab = 'update gitlab set access_token = ? where id = ?'
+        const updateGitlabValues = [token, id]
+        
+        await query(updateGitlab, updateGitlabValues)
+      } else {
+        const updateUser = 'update user set gitlab_id = ? where id = ?'
+        const updateUserValues = [id, userId]
+
+        await query(updateUser, updateUserValues)
+        await query(insert, gitlabValues)
+      }
     } else {
-      await query(insert, insertValues)
+      const newUser = await query(insertUser, [id])
+      await query(insert, gitlabValues)
+
+      userId = newUser.insertId
     }
     
-    return {status: 1, data: result}
+    return {status: 1, data: {id: userId, gitlab: result}}
   } catch (err) {
     errorHandle(err)
   }

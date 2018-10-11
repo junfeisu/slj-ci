@@ -5,7 +5,7 @@ import userModel from './user'
 
 const { getGitlabUser } = userModel
 
-const getGitlabAccessToken = async (code) => {
+const getGitlabAccessToken = async (code, userId) => {
   try {
     const { client_id, client_secret } = gitlabConf.appInfo
     const result = await fetch({
@@ -22,7 +22,7 @@ const getGitlabAccessToken = async (code) => {
     })
 
     updateToken(result.access_token)
-    return getGitlabUser(result.access_token)
+    return getGitlabUser(result.access_token, userId)
   } catch (err) {
     errorHandle(err)
   }
