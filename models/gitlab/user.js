@@ -1,6 +1,7 @@
 import fetch from '../../utils/request/gitlabFetch'
 import errorHandle from '../../utils/request/errorHandle'
 import query from '../../utils/mysql/query'
+import tokenUtil from '../../utils/token'
 
 const getGitlabUser = async (token, userId) => {
   try {
@@ -8,6 +9,7 @@ const getGitlabUser = async (token, userId) => {
       url: '/user'
     })
 
+    const { generateToken } = tokenUtil
     const { username, name, avatar_url, id, email } = result
     const insert = 'insert into gitlab (id, username, name, avatar_url, email,'
       + ' access_token) values (?, ?, ?, ?, ?, ?)'
@@ -36,8 +38,10 @@ const getGitlabUser = async (token, userId) => {
 
       userId = newUser.insertId
     }
+
+    let userToken = generateToken(userId)
     
-    return {status: 1, data: {id: userId, gitlab: result}}
+    return {status: 1, data: {id: userId, token: userToken, gitlabUser: result}}
   } catch (err) {
     errorHandle(err)
   }

@@ -1,6 +1,7 @@
 import fetch from '../../utils/request/githubFetch'
 import errorHandle from '../../utils/request/errorHandle'
 import query from '../../utils/mysql/query'
+import tokenUtil from '../../utils/token'
 
 const getGithubUser = async (token, userId) => {
   try {
@@ -8,6 +9,7 @@ const getGithubUser = async (token, userId) => {
       url: '/user'
     })
     
+    const { generateToken } = tokenUtil
     const { login, name, avatar_url, id, email } = result
     const insertGithub = 'insert into github (id, username, name, avatar_url, email,'
       + ' access_token) values (?, ?, ?, ?, ?, ?)'
@@ -37,8 +39,11 @@ const getGithubUser = async (token, userId) => {
       userId = newUser.insertId
     }
 
-    return {status: 1, data: {id: userId, github: result}}
+    let userToken = generateToken(userId)
+
+    return {status: 1, data: {id: userId, token: userToken, githubUser: result}}
   } catch (err) {
+    console.log(err)
     errorHandle(err)
   }
 }
