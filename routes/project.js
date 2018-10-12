@@ -8,18 +8,22 @@ const addProject = {
   options: {
     validate: {
       payload: {
-        name: Joi.string().min(1).max(20).required(),
-        repository_id: Joi.number().integer().min(1).required(),
-        repository_type: Joi.string().regex(/^git(hub|lab)$/).required(),
+        projectName: Joi.string().min(1).max(20).required(),
+        repository: Joi.object().required(),
         user_id: Joi.number().integer().min(1).required()
       }
     },
     handler: async (req, h) => {
       try {
-        const { name, user_id, repository_id, repository_type } = req.payload
+        const { projectName, user_id, repository } = req.payload
+        const { id, name, type, ownerId, ownerName, ownerAvatar, sshUrl, isPrivate } = repository
         const sql = 'insert into project (name, repository_id, repository_type, user_id) values (?, ?, ?, ?);'
-        const params = [name, repository_id, repository_type, user_id]
+        const insertRepository = 'insert into repository (id, name, type, owner_id, owner_name, '
+          + 'owner_avatar, ssh_url, private) values (?, ?, ?, ?, ?, ?, ?, ?)'
+        const repositoryParams = [id, name, type, ownerId, ownerName, ownerAvatar, sshUrl, isPrivate]
+        const params = [projectName, id, type, user_id]
 
+        await query(insertRepository, repositoryParams)
         const result = await query(sql, params)
 
         return {status: 1, data: {id: result.insertId}}

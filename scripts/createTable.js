@@ -93,9 +93,29 @@ const createHistoryTable = 'create table if not exists history ('
 connection.query(createHistoryTable, (err, result) => {
   if (err) {
     console.log('create table history err ', err)
-    process.exit(1)
   }
 
   console.log('create table history success')
+})
+
+const createRepositoryTable = 'create table if not exists repository ('
+  + 'id int unsigned NOT NULL,'
+  + 'name varchar(20) NOT NULL,'
+  + 'type varchar(20) NOT NULL,'
+  + 'owner_id int unsigned NOT NULL,'
+  + 'owner_name varchar(20) NOT NULL,'
+  + 'owner_avatar varchar(100) NOT NULL,'
+  + 'ssh_url varchar(100) NOT NULL,'
+  + 'private tinyint(1) DEFAULT 0,'
+  + 'PRIMARY KEY(id)'
+  + ')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
+
+connection.query(createRepositoryTable, (err, result) => {
+  if (err) {
+    console.log('create table repository err ', err)
+    process.exit(1)
+  }
+
+  console.log('create table repository success')
   process.exit()
 })

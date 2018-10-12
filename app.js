@@ -1,10 +1,8 @@
 import server from './server'
 import routes from './routes'
-import connectMongo from './utils/connectMongo'
 
 async function start () {
   try {
-    connectMongo()
     await server.register(require('./plugins/socket').default)
     await server.register(require('./plugins/interceptor').default)
 
