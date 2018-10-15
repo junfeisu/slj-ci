@@ -30,7 +30,7 @@ const addProject = {
         if (!searchRepositoryResult.length) {
           await query(insertRepository, repositoryParams)
         }
-        
+
         const result = await query(sql, params)
 
         return {status: 1, data: {id: result.insertId}}
@@ -54,7 +54,11 @@ const getProjects = {
     handler: async (req, h) => {
       try {
         const { userId, type } = req.params
-        const sql = {sql: 'select * from project left join repository on project.repository_type=repository.type and project.repository_id=repository.id where project.user_id = ?', nestTables: true}
+        const sql = {
+          sql: 'select * from project left join repository on project.repository_type=repository.type'
+            + ' and project.repository_id=repository.id where project.user_id = ?',
+          nestTables: true
+        }
         const params = [userId]
         const projects = await query(sql, params)
 
