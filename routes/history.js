@@ -107,8 +107,34 @@ const getHistories = {
   }
 }
 
+const deleteHistory = {
+  path: '/history/remove/{history_id}',
+  method: 'DELETE',
+  options: {
+    validate: {
+      params: {
+        history_id: Joi.number().integer().min(1).required()
+      }
+    },
+    handler: async (req, h) => {
+      try {
+        const { history_id } = req.params
+        const deleteHistorySql = 'delete from history where id = ?'
+        const deleteHistoryParams = [history_id]
+
+        const result = await query(deleteHistorySql, deleteHistoryParams)
+
+        return result.affectedRows === 1 ? {status: 1, data: null} : {status: 0, data: result.message}
+      } catch (err) {
+
+      }
+    }
+  }
+}
+
 export default [
   addHistory,
   updateHistory,
-  getHistories
+  getHistories,
+  deleteHistory
 ]
