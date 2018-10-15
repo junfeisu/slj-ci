@@ -22,8 +22,15 @@ const addProject = {
           + 'owner_avatar, ssh_url, private) values (?, ?, ?, ?, ?, ?, ?, ?)'
         const repositoryParams = [id, name, type, ownerId, ownerName, ownerAvatar, sshUrl, isPrivate]
         const params = [projectName, id, type, user_id]
+        const searchRepository = 'select * from repository where type=? and id=?'
+        const searchParams = [type, id]
 
-        await query(insertRepository, repositoryParams)
+        const searchRepositoryResult = await query(searchRepository, searchParams)
+
+        if (!searchRepositoryResult.length) {
+          await query(insertRepository, repositoryParams)
+        }
+        
         const result = await query(sql, params)
 
         return {status: 1, data: {id: result.insertId}}
@@ -47,8 +54,8 @@ const getProjects = {
     handler: async (req, h) => {
       try {
         const { userId, type } = req.params
-        const sql = 'select * from project where user_id = ? and repository_type = ?'
-        const params = [userId, type]
+        const sql = {sql: 'select * from project left join repository on project.repository_type=repository.type and project.repository_id=repository.id where project.user_id = ?', nestTables: true}
+        const params = [userId]
         const projects = await query(sql, params)
 
         return {status: 1, data: projects}

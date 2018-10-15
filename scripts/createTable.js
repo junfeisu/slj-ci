@@ -107,7 +107,7 @@ const createRepositoryTable = 'create table if not exists repository ('
   + 'owner_avatar varchar(100) NOT NULL,'
   + 'ssh_url varchar(100) NOT NULL,'
   + 'private tinyint(1) DEFAULT 0,'
-  + 'PRIMARY KEY(id)'
+  + 'PRIMARY KEY(id,type)'
   + ')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
 
 connection.query(createRepositoryTable, (err, result) => {
