@@ -4,6 +4,7 @@ import repos from './repos'
 import user from './user'
 import deploy from './deploy'
 import project from './project'
+import history from './history'
 
 export default [
   authToken,
@@ -12,4 +13,5 @@ export default [
   user,
   deploy,
   project,
+  history,
 ]
