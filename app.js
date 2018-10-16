@@ -1,10 +1,13 @@
 import server from './server'
 import routes from './routes'
+import initSocket from './socket/index'
 
 async function start () {
   try {
-    await server.register(require('./plugins/socket').default)
+    // await server.register(require('./plugins/socket').default)
     await server.register(require('./plugins/interceptor').default)
+
+    initSocket()
 
     server.realm.modifiers.route.prefix = '/api'
     routes.forEach(route => {

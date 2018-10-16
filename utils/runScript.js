@@ -2,8 +2,29 @@ import yamlParser from './yamlParser'
 import path from 'path'
 import { spawn } from 'child_process'
 import judgeType from '../utils/judgeType'
+import statusRoom from '../socket/status'
+import logRoom from '../socket/log'
 
 const scripts = []
+/*
+ @status 0: waiting 1: executing 2: success 3: fail
+ */
+const result = {}
+let status = 0
+
+Object.defineProperty(result, 'status', {
+  get: function () {
+    return status
+  },
+  set: function (value) {
+    if (value === status) {
+      return
+    }
+
+    status = value
+    statusRoom.emit('updateStatus', value)
+  }
+})
 
 const parse = (yamlPath) => {
   return yamlParser(yamlPath)
@@ -40,8 +61,11 @@ const sortScripts = (yamlPath) => {
 
 const runScriptsByOrder = () => {
   if (!scripts.length) {
+    result.status = 2
     return
   }
+
+  result.status = 1
 
   let script = scripts.shift().trim()
   let commandComponents = script.split(/\s+/)
@@ -55,16 +79,21 @@ const execScript = async (commandName, args) => {
 
   rs.stdout.on('data', data => {
     console.log(data.toString())
+    socketEmit('updateLog', data.toString())
   })
 
   rs.stderr.on('data', data => {
     console.log(data.toString())
+    socketEmit('updateLog', data.toString())
   })
 
   rs.on('close', code => {
-    if (!code) {
-      runScriptsByOrder()
+    if (code) {
+      result.status = 3
+      return
     }
+
+    runScriptsByOrder()
   })
 }
 

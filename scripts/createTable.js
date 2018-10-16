@@ -51,6 +51,7 @@ const createGitlabTable = 'create table if not exists gitlab ('
 connection.query(createGitlabTable, (err, result) => {
   if (err) {
     console.log('create table gitlab err ', err)
+    return
   }
 
   console.log('create table gitlab success')
@@ -70,6 +71,7 @@ const createProjectTable = 'create table if not exists project ('
 connection.query(createProjectTable, (err, result) => {
   if (err) {
     console.log('create table project err ', err)
+    return
   }
 
   console.log('create table project success')
@@ -93,9 +95,27 @@ const createHistoryTable = 'create table if not exists history ('
 connection.query(createHistoryTable, (err, result) => {
   if (err) {
     console.log('create table history err ', err)
+    return
   }
 
   console.log('create table history success')
+})
+
+const createNoticeTable = 'create table if not exists notice ('
+  + 'room varchar(20) NOT NULL,'
+  + 'user_id int unsigned,'
+  + 'project_id int unsigned,'
+  + 'socket_id varchar(50) NOT NULL,'
+  + 'PRIMARY KEY(room,socket_id)'
+  + ')ENGINE=InnoDB DEFAULT CHARSET=utf8;'
+
+connection.query(createNoticeTable, (err, result) => {
+  if (err) {
+    console.log('create table notice err ', err)
+    return
+  }
+
+  console.log('create table notice success')
 })
 
 const createRepositoryTable = 'create table if not exists repository ('
