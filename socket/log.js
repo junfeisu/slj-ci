@@ -7,9 +7,9 @@ const logRoom = io.of('/log')
 
     socket.on('build', async data => {
       try {
-        const { userId, projectId } = data
-        const addNoticeSql = 'insert into notice (room, user_id, project_id, socket_id) values (?, ?, ?, ?)'
-        const addNoticeParams = ['log', userId, projectId, socketId]
+        const { userId, historyId } = data
+        const addNoticeSql = 'insert into notice (room, user_id, history_id, socket_id) values (?, ?, ?, ?)'
+        const addNoticeParams = ['log', userId, historyId, socketId]
 
         await query(addNoticeSql, addNoticeParams)
       } catch (err) {

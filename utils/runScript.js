@@ -4,6 +4,7 @@ import { spawn } from 'child_process'
 import judgeType from '../utils/judgeType'
 import statusRoom from '../socket/status'
 import logRoom from '../socket/log'
+import { sendMessage } from '../socket/status'
 
 const scripts = []
 /*
@@ -22,7 +23,7 @@ Object.defineProperty(result, 'status', {
     }
 
     status = value
-    statusRoom.emit('updateStatus', value)
+    sendMessage('updateStatus', value, 1)
   }
 })
 
@@ -79,12 +80,12 @@ const execScript = async (commandName, args) => {
 
   rs.stdout.on('data', data => {
     console.log(data.toString())
-    socketEmit('updateLog', data.toString())
+    // logRoom('updateLog', data.toString())
   })
 
   rs.stderr.on('data', data => {
     console.log(data.toString())
-    socketEmit('updateLog', data.toString())
+    // logRoom('updateLog', data.toString())
   })
 
   rs.on('close', code => {

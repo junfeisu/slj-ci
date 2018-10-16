@@ -7,9 +7,9 @@ const statusRoom = io.of('/status')
 
     socket.on('build', async data => {
       try {
-        const { userId, projectId } = data
-        const addNoticeSql = 'insert into notice (room, user_id, project_id, socket_id) values (?, ?, ?, ?)'
-        const addNoticeParams = ['status', userId, projectId, socketId]
+        const { userId, historyId } = data
+        const addNoticeSql = 'insert into notice (room, user_id, history_id, socket_id) values (?, ?, ?, ?)'
+        const addNoticeParams = ['status', userId, historyId, socketId]
 
         await query(addNoticeSql, addNoticeParams)
       } catch (err) {
@@ -24,9 +24,28 @@ const statusRoom = io.of('/status')
 
         await query(removeNoticeSql, removeNoticeParams)
       } catch (err) {
-        console.log('remove notice err', err.message)
+        console.log('status remove notice err', err.message)
       }
     })
   })
+  
+const sendMessage = async (eventName, data = null, historyId = null) => {
+  if (!historyId) {
+    statusRoom.emit(eventName, data)
+    return
+  }
+
+  const searchSocketSql = 'select socket_id from notice where history_id = ?'
+  const results = await query(searchSocketSql, historyId)
+
+  if (results.length) {
+    results.forEach(result => {
+      console.log(result.socket_id)
+      io.to(result.socket_id).emit('updateStatus', data)
+    })
+  }
+}
+
+export { sendMessage }
 
 export default statusRoom
