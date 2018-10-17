@@ -1,5 +1,6 @@
 import io from './io'
 import query from '../utils/mysql/query'
+import sortScripts from '../utils/runScript'
 
 const statusRoom = io.of('/status')
   .on('connection', socket => {
@@ -12,30 +13,32 @@ const statusRoom = io.of('/status')
         const addNoticeParams = ['status', userId, historyId, socketId]
 
         await query(addNoticeSql, addNoticeParams)
+
+        sortScripts('../ci.yml')
       } catch (err) {
-        console.log('add notice err', err.message)
+        console.log('add status notice err', err.message)
       }
     })
 
     socket.on('disconnect', async () => {
       try {
-        const removeNoticeSql = 'delete from notice where socket_id = ?'
+        const removeNoticeSql = 'delete from notice where room = "status" and socket_id = ?'
         const removeNoticeParams = [socketId]
 
         await query(removeNoticeSql, removeNoticeParams)
       } catch (err) {
-        console.log('status remove notice err', err.message)
+        console.log('remove status notice err', err.message)
       }
     })
   })
-  
+
 const sendMessage = async (eventName, data = null, historyId = null) => {
   if (!historyId) {
     statusRoom.emit(eventName, data)
     return
   }
 
-  const searchSocketSql = 'select socket_id from notice where history_id = ?'
+  const searchSocketSql = 'select socket_id from notice where room = "status" and history_id = ?'
   const results = await query(searchSocketSql, historyId)
 
   if (results.length) {

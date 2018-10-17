@@ -2,9 +2,8 @@ import yamlParser from './yamlParser'
 import path from 'path'
 import { spawn } from 'child_process'
 import judgeType from '../utils/judgeType'
-import statusRoom from '../socket/status'
-import logRoom from '../socket/log'
 import { sendMessage } from '../socket/status'
+import { sendLog } from '../socket/log'
 
 const scripts = []
 /*
@@ -69,23 +68,21 @@ const runScriptsByOrder = () => {
   result.status = 1
 
   let script = scripts.shift().trim()
-  let commandComponents = script.split(/\s+/)
-  let commandName = commandComponents.shift()
 
-  execScript(commandName, commandComponents)
+  execScript(script)
 }
 
-const execScript = async (commandName, args) => {
+const execScript = async (command) => {
+  let args = command.split(/\s+/)
+  let commandName = args.shift()
   const rs = spawn(commandName, args)
 
   rs.stdout.on('data', data => {
-    console.log(data.toString())
-    // logRoom('updateLog', data.toString())
+    sendLog('updateLog', {cmd: command, log: data.toString()}, 1)
   })
 
   rs.stderr.on('data', data => {
-    console.log(data.toString())
-    // logRoom('updateLog', data.toString())
+    sendLog('updateLog', {cmd: command, log: data.toString()}, 1)
   })
 
   rs.on('close', code => {
@@ -98,4 +95,4 @@ const execScript = async (commandName, args) => {
   })
 }
 
-sortScripts('../ci.yml')
+export default sortScripts

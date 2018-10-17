@@ -13,20 +13,38 @@ const logRoom = io.of('/log')
 
         await query(addNoticeSql, addNoticeParams)
       } catch (err) {
-        console.log('add notice err', err.message)
+        console.log('add log notice err', err.message)
       }
     })
 
     socket.on('disconnect', async () => {
       try {
-        const removeNoticeSql = 'delete from notice where socket_id = ?'
+        const removeNoticeSql = 'delete from notice where room = "log" and socket_id = ?'
         const removeNoticeParams = [socketId]
 
         await query(removeNoticeSql, removeNoticeParams)
       } catch (err) {
-        console.log('remove notice err', err.message)
+        console.log('remove log notice err', err.message)
       }
     })
   })
+
+const sendLog = async (eventName, data = null, historyId = null) => {
+  if (!historyId) {
+    logRoom.emit(eventName, data)
+    return
+  }
+
+  const searchSocketSql = 'select socket_id from notice where room = "log" and history_id = ?'
+  const searchResult = await query(searchSocketSql, historyId)
+
+  if (searchResult.length) {
+    searchResult.forEach(val => {
+      io.to(val.socket_id).emit('updateLog', data)
+    })
+  }
+}
+
+export { sendLog }
 
 export default logRoom
