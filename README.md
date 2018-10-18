@@ -34,3 +34,21 @@
       }
     }
     ```
+
+### ci思路
+
+1. push dev、feature 代码到仓库 | 手动触发（指定分支，指定commit）
+
+2. webhook响应发送一个post请求给服务端 | 发送请求
+
+3. git clone ssh_url && git checkout branchName | commit_id
+
+4. build base image: docker build -t projectName:commit_id -f dockerFilename .
+
+5. run scripts(test script): docker run imageName:tag
+
+6. run build: CMD script execute
+
+7. clear
+
+从第3-6步，及时更新status, log(socket), 并保存日志

@@ -1,6 +1,7 @@
 import Joi from 'joi'
 import getBoomErrWay from '../utils/request/errorTable'
 import query from '../utils/mysql/query'
+import runScript from '../utils/runScript'
 
 const addHistory = {
   path: '/history/add',
@@ -9,19 +10,31 @@ const addHistory = {
     validate: {
       payload: {
         project_id: Joi.number().integer().min(1).required(),
+        project_name: Joi.string().min(1).required(),
+        ssh_url: Joi.string().required(),
         trigger_user_name: Joi.string().required(),
-        trigger_way: Joi.string().required(),
         branch: Joi.string().required(),
         commit_id: Joi.string().length(7).required(),
-        commit_message: Joi.string().required()
+        commit_message: Joi.string().required(),
+        dockerfile: Joi.string()
       }
     },
     handler: async (req, h) => {
       try {
-        const { project_id, trigger_user_name, trigger_way, branch, commit_id, commit_message } = req.payload
+        const { 
+          project_id,
+          project_name,
+          trigger_user_name,
+          ssh_url,
+          branch,
+          commit_id,
+          commit_message,
+          dockerfile 
+        } = req.payload
+
         const addHistorySql = 'insert into history (project_id, trigger_user_name, trigger_way,'
           + ' branch, commit_id, commit_message) values (? ,?, ?, ?, ?, ?)'
-        const addHistoryParams = [project_id, trigger_user_name, trigger_way, branch, commit_id, commit_message]
+        const addHistoryParams = [project_id, trigger_user_name, 'manual', branch, commit_id, commit_message]
 
         const result = await query(addHistorySql, addHistoryParams)
 

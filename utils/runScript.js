@@ -1,6 +1,6 @@
-import yamlParser from './yamlParser'
 import path from 'path'
 import { spawn } from 'child_process'
+import yamlParser from './yamlParser'
 import judgeType from '../utils/judgeType'
 import { sendMessage } from '../socket/status'
 import { sendLog } from '../socket/log'
