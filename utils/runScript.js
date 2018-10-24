@@ -11,7 +11,9 @@ const scripts = []
  */
 const result = {}
 let status = 0
+let historyId = ''
 
+// Observer of result.status
 Object.defineProperty(result, 'status', {
   get: function () {
     return status
@@ -22,20 +24,30 @@ Object.defineProperty(result, 'status', {
     }
 
     status = value
-    sendMessage('updateStatus', value, 1)
+    sendMessage('updateStatus', value, historyId)
   }
 })
 
-const parse = (yamlPath) => {
-  return yamlParser(yamlPath)
+// parse yaml
+const parseYaml = (yamlPath, id) => {
+  const parseResult = yamlParser(yamlPath)
+  historyId = id
+
+  if (!parseResult.status) {
+    result.status = 3
+    sendLog('updateLog', {cmd: 'parse yaml', log: parseResult.data.message}, historyId)
+
+    return
+  }
+
+  sortScripts(parseResult.data)
 }
 
-const sortScripts = (yamlPath) => {
-  let resolvedPath = path.resolve(__dirname, yamlPath)
-  const initScripts = parse(resolvedPath)
+// sort the scripts according to given priority
+const sortScripts = (yamlContent) => {
   const priorities = ['before_install', 'before_script', 'script', 'after_script']
   priorities.forEach(priority => {
-    let currentScript = initScripts[priority]
+    let currentScript = yamlContent[priority]
 
     // 当命令为空或者空数组
     if (!currentScript || !currentScript.length) {
@@ -72,7 +84,7 @@ const runScriptsByOrder = () => {
   execScript(script)
 }
 
-const execScript = async (command) => {
+const execScript = (command) => {
   let args = command.split(/\s+/)
   let commandName = args.shift()
   const rs = spawn(commandName, args)
@@ -95,4 +107,4 @@ const execScript = async (command) => {
   })
 }
 
-export default sortScripts
+export default parseYaml

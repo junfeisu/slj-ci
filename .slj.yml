@@ -1,13 +1,4 @@
-sudo: false
-language: node_js
-node_js: stable
-
-git:
-  depth: 2
-
-branches:
-  only:
-    - dev
+base: node:8.4
 
 before_install:
   - npm install

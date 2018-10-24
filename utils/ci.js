@@ -2,12 +2,16 @@ import { spawn } from 'child_process'
 import shell from 'shelljs'
 import fs from 'fs'
 import path from 'path'
+import { sendMessage } from '../socket/status'
+import { sendLog } from '../socket/log'
+import parseYaml from './runScript'
 
 const HOME_PWD = process.env.HOME
 const PROJECT_PWD = 'sljCiProjects'
 
 let ciArgs = {}
 
+// create a directory to store all projects
 const createProjectPwd = () => {
   let projectHomePath = path.resolve(HOME_PWD, PROJECT_PWD)
   if (!fs.existsSync(projectHomePath)) {
@@ -26,47 +30,50 @@ const isProjectExist = () => {
   }
 }
 
+// This project already exists locally
 const pullProject = (projectPath) => {
   shell.cd(projectPath)
 
-  const { branch } = ciArgs
-  let gitRemote = shell.exec('git remote').stdout.replace('\n', '')
+  const { branch, historyId } = ciArgs
+  // Notice the ci is executing
+  sendMessage('updateStatus', 1, historyId)
 
+  let gitRemote = shell.exec('git remote').stdout.replace('\n', '')
   const pullStream = spawn('git', ['pull', gitRemote, branch])
 
   pullStream.stdout.on('data', data => {
-    console.log(data.toString())
+    sendLog('updateLog', {cmd: `git pull ${gitRemote} ${branch}`, log: data.toString()}, historyId)
   })
 
   pullStream.stderr.on('data', err => {
-    console.log(err.toString())
+    sendLog('updateLog', {cmd: `git pull ${gitRemote} ${branch}`, log: err.toString()}, historyId)
   })
 
   pullStream.on('exit', code => {
-    console.log('git pull exit code is ', code)
-
     if (!code) {
       parseScript()
     }
   })
 }
 
+// This project doesn't exist locally
 const cloneProject = (projectPath) => {
+  const { repoUrl, projectName, historyId } = ciArgs
+
   shell.cd(path.resolve(HOME_PWD, PROJECT_PWD))
-  const { repoUrl, projectName } = ciArgs
-  const cloneStream = spawn(`git`, ['clone', repoUrl, projectName])
+  sendMessage('updateStatus', 1, historyId)
+
+  const cloneStream = spawn('git', ['clone', repoUrl, projectName])
 
   cloneStream.stdout.on('data', data => {
-    console.log(data.toString())
+    sendLog('updateLog', {cmd: `git clone ${repoUrl} ${projectName}`, log: data.toString()}, historyId)
   })
 
   cloneStream.stderr.on('data', data => {
-    console.log(data.toString())
+    sendLog('updateLog', {cmd: `git clone ${repoUrl} ${projectName}`, log: data.toString()}, historyId)
   })
 
   cloneStream.on('exit', code => {
-    console.log('git clone exit code is ', code)
-
     if (!code) {
       shell.cd(projectPath)
       parseScript()
@@ -75,18 +82,19 @@ const cloneProject = (projectPath) => {
 }
 
 const parseScript = () => {
-  const { branch, commitId } = ciArgs
+  const { branch, commitId, historyId } = ciArgs
   const gitHEAD = commitId ? commitId : branch
   const checkoutResult = shell.exec(`git checkout ${gitHEAD}`)
 
   // code is 0 for success
   if (!checkoutResult.code) {
-    if (!fs.existsSync(path.resolve(process.cwd(), '.slj.yml'))) {
+    let yamlPath = path.resolve(process.cwd(), '.slj.yml')
+    if (!fs.existsSync(yamlPath)) {
       console.log('[slj-ci:error]: .slj.yml is need')
       return
     }
 
-    console.log('parseYaml')
+    parseYaml(yamlPath, historyId)
   }
 }
 

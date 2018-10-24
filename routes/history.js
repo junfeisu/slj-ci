@@ -1,7 +1,7 @@
 import Joi from 'joi'
 import getBoomErrWay from '../utils/request/errorTable'
 import query from '../utils/mysql/query'
-import runScript from '../utils/runScript'
+import initCi from '../utils/ci'
 
 const addHistory = {
   path: '/history/add',
@@ -37,6 +37,8 @@ const addHistory = {
         const addHistoryParams = [project_id, trigger_user_name, 'manual', branch, commit_id, commit_message]
 
         const result = await query(addHistorySql, addHistoryParams)
+
+        init({repoUrl: ssh_url, projectName: project_name, branch: branch, commitId: commit_id, historyId: result.insertId})
 
         return {status: 1, data: {id: result.insertId}}
       } catch (err) {

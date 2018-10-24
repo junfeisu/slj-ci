@@ -5,10 +5,9 @@ const parse = (path) => {
   try {
     const yamlContent = Yaml.safeLoad(fs.readFileSync(path, 'utf8'))
 
-    return yamlContent
+    return {status: 1, data: yamlContent}
   } catch (err) {
-    console.log(err)
-    return null
+    return {status: 0, data: err}
   }
 }
 
