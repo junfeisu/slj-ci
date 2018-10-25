@@ -1,5 +1,6 @@
 const mysqlConf = require('../config/mysqlConf.json')
 const mysql = require('mysql')
+const createTables = require('./createTable')
 
 const { user, password, host } = mysqlConf
 
@@ -18,5 +19,12 @@ connection.query(createDb, (err, result) => {
   }
 
   console.log('create database success')
-  process.exit(0)
+  connection.changeUser({database: 'sljCi'}, err => {
+    if (err) {
+      console.log('err', err)
+      process.exit(1)
+    }
+    
+    createTables(connection)  
+  })
 })

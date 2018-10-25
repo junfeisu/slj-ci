@@ -20,9 +20,13 @@ const verifyToken = (token, userId) => {
 
   try {
     let decodedToken = jsonWebToken.verify(token, secret)
-    if (decodedToken.name === Number(userId)) {
-      return result
+    
+    if (decodedToken.name !== userId) {
+      result.isValid = false
+      result.message = 'token is not valid'
     }
+
+    return result
   } catch (err) {
     result.isValid = false
     result.message = err.message

@@ -90,7 +90,8 @@ const parseScript = () => {
   if (!checkoutResult.code) {
     let yamlPath = path.resolve(process.cwd(), '.slj.yml')
     if (!fs.existsSync(yamlPath)) {
-      console.log('[slj-ci:error]: .slj.yml is need')
+      sendMessage('updateStatus', 3, historyId)
+      sendLog('updateLog', {cmd: 'parse yaml', log: '[slj-ci:error]: .slj.yml is need'}, historyId)
       return
     }
 
@@ -103,7 +104,5 @@ const init = (args) => {
   createProjectPwd()
   isProjectExist()
 }
-
-init({repoUrl: 'git@github.com:junfeisu/slj-ci.git', projectName: 'sljci', branch: 'master', commitId: ''})
 
 export default init

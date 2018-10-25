@@ -1,6 +1,5 @@
 import io from './io'
 import query from '../utils/mysql/query'
-import sortScripts from '../utils/runScript'
 
 const statusRoom = io.of('/status')
   .on('connection', socket => {
@@ -13,8 +12,6 @@ const statusRoom = io.of('/status')
         const addNoticeParams = ['status', userId, historyId, socketId]
 
         await query(addNoticeSql, addNoticeParams)
-
-        sortScripts('../ci.yml')
       } catch (err) {
         console.log('add status notice err', err.message)
       }
@@ -43,7 +40,6 @@ const sendMessage = async (eventName, data = null, historyId = null) => {
 
   if (results.length) {
     results.forEach(result => {
-      console.log(result.socket_id)
       io.to(result.socket_id).emit('updateStatus', data)
     })
   }

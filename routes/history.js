@@ -7,18 +7,17 @@ const addHistory = {
   path: '/history/add',
   method: 'PUT',
   options: {
-    validate: {
-      payload: {
-        project_id: Joi.number().integer().min(1).required(),
-        project_name: Joi.string().min(1).required(),
-        ssh_url: Joi.string().required(),
-        trigger_user_name: Joi.string().required(),
-        branch: Joi.string().required(),
-        commit_id: Joi.string().length(7).required(),
-        commit_message: Joi.string().required(),
-        dockerfile: Joi.string()
-      }
-    },
+    // validate: {
+    //   payload: {
+    //     project_id: Joi.number().integer().min(1).required(),
+    //     project_name: Joi.string().min(1).required(),
+    //     ssh_url: Joi.string().required(),
+    //     trigger_user_name: Joi.string().required(),
+    //     branch: Joi.string().required(),
+    //     commit_id: Joi.string().required(),
+    //     commit_message: Joi.string().required()
+    //   }
+    // },
     handler: async (req, h) => {
       try {
         const { 
@@ -29,18 +28,19 @@ const addHistory = {
           branch,
           commit_id,
           commit_message,
-          dockerfile 
         } = req.payload
 
         const addHistorySql = 'insert into history (project_id, trigger_user_name, trigger_way,'
           + ' branch, commit_id, commit_message) values (? ,?, ?, ?, ?, ?)'
         const addHistoryParams = [project_id, trigger_user_name, 'manual', branch, commit_id, commit_message]
 
-        const result = await query(addHistorySql, addHistoryParams)
+        // const result = await query(addHistorySql, addHistoryParams)
 
-        init({repoUrl: ssh_url, projectName: project_name, branch: branch, commitId: commit_id, historyId: result.insertId})
+        // init({repoUrl: ssh_url, projectName: project_name, branch: branch, commitId: commit_id, historyId: result.insertId})
+        initCi({repoUrl: 'git@github.com:junfeisu/slj-ci.git', projectName: 'sljci', branch: 'dev', commitId: '', historyId: 1})
 
-        return {status: 1, data: {id: result.insertId}}
+        // return {status: 1, data: {id: result.insertId}}
+        return {status: 1, data: {id: 1}}
       } catch (err) {
         return getBoomErrWay(400)(err.message)
       }
