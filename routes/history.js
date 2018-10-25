@@ -20,7 +20,7 @@ const addHistory = {
     // },
     handler: async (req, h) => {
       try {
-        const { 
+        const {
           project_id,
           project_name,
           trigger_user_name,
