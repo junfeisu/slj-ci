@@ -1,8 +1,8 @@
 import Joi from 'joi'
 import getBoomErrWay from '../utils/request/errorTable'
 import query from '../utils/mysql/query'
-import cryptic from '../utils/cryptic'
-import tokenUtil from '../utils/token'
+import cryptic from '../utils/request/cryptic'
+import tokenUtil from '../utils/request/token'
 
 const addUser = {
   path: '/user/add',

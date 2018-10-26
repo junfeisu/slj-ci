@@ -37,7 +37,13 @@ const addHistory = {
         // const result = await query(addHistorySql, addHistoryParams)
 
         // init({repoUrl: ssh_url, projectName: project_name, branch: branch, commitId: commit_id, historyId: result.insertId})
-        initCi({repoUrl: 'git@github.com:junfeisu/slj-ci.git', projectName: 'sljci', branch: 'dev', commitId: '', historyId: 1})
+        initCi({
+          repoUrl: 'git@github.com:junfeisu/slj-ci.git',
+          projectName: 'sljci',
+          branch: 'dev',
+          commitId: '',
+          historyId: 1
+        })
 
         // return {status: 1, data: {id: result.insertId}}
         return {status: 1, data: {id: 1}}
@@ -100,7 +106,8 @@ const getHistories = {
         page_num = page_num ? page_num : 1
         page_size = page_size ? page_size : 10
 
-        const getHistoriesSql = 'select *, (select count(*) from history where project_id=?) as total from history where project_id = ? limit ?,?'
+        const getHistoriesSql = 'select *, (select count(*) from history where project_id=?)'
+          + 'as total from history where project_id = ? limit ?,?'
         const getHistoriesParams = [project_id, project_id, (page_num - 1) * page_size, page_size]
 
         const result = await query(getHistoriesSql, getHistoriesParams)
@@ -115,7 +122,6 @@ const getHistories = {
 
         return {status: 1, data: {histories: result, total: total}}
       } catch (err) {
-        console.log(err)
         return getBoomErrWay(400)(err.message)
       }
     }

@@ -1,7 +1,7 @@
 import fetch from '../../utils/request/gitlabFetch'
 import errorHandle from '../../utils/request/errorHandle'
 import query from '../../utils/mysql/query'
-import tokenUtil from '../../utils/token'
+import tokenUtil from '../../utils/request/token'
 
 const getGitlabUser = async (token, userId) => {
   try {

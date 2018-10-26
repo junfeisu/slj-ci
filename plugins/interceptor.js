@@ -1,6 +1,6 @@
 import { updateGithubId } from '../utils/request/githubFetch'
 import { updateGitlabId } from '../utils/request/gitlabFetch'
-import tokenUtil from '../utils/token'
+import tokenUtil from '../utils/request/token'
 
 // API does not need token verification
 const ignorePaths = ['token', 'deploy', 'user/add', 'user/login']
