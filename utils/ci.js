@@ -6,6 +6,8 @@ import { sendMessage } from '../socket/status'
 import { sendLog } from '../socket/log'
 import yamlParser from './yamlParser'
 import judgeType from './interal/judgeType'
+import docker, { createContainer } from '../models/docker/docker'
+import { getContainer } from '../models/docker/container'
 
 const HOME_PWD = process.env.HOME
 const PROJECT_PWD = 'sljCiProjects'
@@ -136,6 +138,52 @@ const parseYaml = yamlPath => {
   sortScripts(parseResult.data)
 }
 
+const addContainer = async (yamlContent) => {
+  try {
+    const { historyId, projectName } = ciArgs
+    let { image, name, env } = yamlContent
+
+    image = image ? image : 'ubuntu:16.04'
+    name = name ? name + '-' + historyId : projectName + '-' + historyId,
+    env = env ? env : []
+
+    let containerID = 'bb09a24688dc20b60766c90c4affd8491bf215b4535582507b5eae5193a5585e'
+    // const container = await createContainer(name, image, env)
+
+    let container = getContainer(containerID)
+    // await container.start()
+
+    execContainer(container)
+  } catch (err) {
+    const { historyId } = ciArgs
+    result.status = 3
+    sendLog('updateLog', {cmd: 'create container', log: err.message}, historyId)
+  }
+}
+
+const execContainer = async (container) => {
+  let command = ''
+  let scriptLen = scripts.length
+  const { historyId } = ciArgs
+
+  scripts.forEach((script, index) => {
+    let isLast = !!(index === scriptLen - 1)
+    command += isLast ? script : script + ' && '
+  })
+
+  console.log('command', command)
+  try {
+    const exec = await container.exec({Cmd: command, AttachStdin: true, AttachStdout: true, Tty: true})
+    const stream = await exec.start({})
+    stream.output.pipe(process.stdout, process.stderr)
+  } catch (err) {
+    // result.status = 3
+    console.log(err)
+    // sendLog('updateLog', {cmd: `exec ${command}`, log: err.message}, historyId)
+    return
+  }
+}
+
 // sort the scripts according to given priority
 const sortScripts = (yamlContent) => {
   const priorities = ['before_install', 'before_script', 'script', 'after_script']
@@ -161,7 +209,8 @@ const sortScripts = (yamlContent) => {
     }
   })
 
-  runScriptsByOrder()
+  addContainer(yamlContent)
+  // runScriptsByOrder()
 }
 
 const runScriptsByOrder = () => {
