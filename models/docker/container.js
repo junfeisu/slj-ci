@@ -1,23 +1,13 @@
 import docker from './docker'
 
-export function getContainer (containerID) {
-  return docker.getContainer(containerID)
+export function removeContainer (containerID, options) {
+  return docker.getContainer(containerID).remove(options)
 }
 
-export function startContainer (containerID) {
+export function startContainer (containerID, options) {
   return docker.getContainer(containerID).start()
 }
 
-export async function stopContainer (containerID) {
-  try {
-    let container = getContainer(containerID)
-
-    if (container) {
-      container.inspect()
-        .then()
-    }
-  } catch (err) {
-    
-  }
+export function stopContainer (ContainerID, options) {
+  return docker.getContainer(containerID).stop(options)
 }
-

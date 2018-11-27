@@ -66,11 +66,17 @@ const pullProject = (projectPath) => {
   const pullStream = spawn('git', ['pull', gitRemote, branch])
 
   pullStream.stdout.on('data', data => {
-    sendLog('updateLog', {cmd: `git pull ${gitRemote} ${branch}`, log: data.toString()}, historyId)
+    sendLog('updateLog', {
+      cmd: `git pull ${gitRemote} ${branch}`,
+      log: data.toString()
+    }, historyId)
   })
 
   pullStream.stderr.on('data', err => {
-    sendLog('updateLog', {cmd: `git pull ${gitRemote} ${branch}`, log: err.toString()}, historyId)
+    sendLog('updateLog', {
+      cmd: `git pull ${gitRemote} ${branch}`,
+      log: err.toString()
+    }, historyId)
   })
 
   pullStream.on('exit', code => {
@@ -90,11 +96,17 @@ const cloneProject = (projectPath) => {
   const cloneStream = spawn('git', ['clone', repoUrl, projectName])
 
   cloneStream.stdout.on('data', data => {
-    sendLog('updateLog', {cmd: `git clone ${repoUrl} ${projectName}`, log: data.toString()}, historyId)
+    sendLog('updateLog', {
+      cmd: `git clone ${repoUrl} ${projectName}`,
+      log: data.toString()
+    }, historyId)
   })
 
   cloneStream.stderr.on('data', data => {
-    sendLog('updateLog', {cmd: `git clone ${repoUrl} ${projectName}`, log: data.toString()}, historyId)
+    sendLog('updateLog', {
+      cmd: `git clone ${repoUrl} ${projectName}`,
+      log: data.toString()
+    }, historyId)
   })
 
   cloneStream.on('exit', code => {
@@ -115,7 +127,10 @@ const parseScript = () => {
     let yamlPath = path.resolve(process.cwd(), '.slj.yml')
     if (!fs.existsSync(yamlPath)) {
       sendMessage('updateStatus', 3, historyId)
-      sendLog('updateLog', {cmd: 'parse yaml', log: '[slj-ci:error]: .slj.yml is need'}, historyId)
+      sendLog('updateLog', {
+        cmd: 'parse yaml',
+        log: '[slj-ci:error]: .slj.yml is need'
+      }, historyId)
       return
     }
 
@@ -135,7 +150,32 @@ const parseYaml = yamlPath => {
     return
   }
 
-  sortScripts(parseResult.data)
+  // sortScripts(parseResult.data)
+  createDockerContainer(parseResult.data)
+}
+
+const createDockerContainer = async (option) => {
+  let { image, name, envs } = options
+  const { historyId } = ciArgs
+
+  if (!image) {
+    image = 'ubuntu:16.04'
+  }
+
+  if (!envs) {
+    envs = []
+  }
+  
+  try {
+    const container = await createContainer(image, name, envs)
+    console.log(container)
+  } catch (err) {
+    result.status = 3
+    sendLog('updateLog', {
+      cmd: 'create container',
+      log: err.message || 'create container error'
+    }, historyId)
+  }
 }
 
 const addContainer = async (yamlContent) => {
