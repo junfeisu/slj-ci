@@ -2,9 +2,6 @@
 
 > A lightweight ci system which supports github and gitlab.
 
-### structure
-![项目思路图](http://www.sujunfei.cn/structure.png)
-
 ### 数据库及github | gitlab配置文件
 
 因为私密性以及安全性的问题，这些配置文件就没有提交上github.需要用户自己手动添加
@@ -43,9 +40,9 @@
 
 3. git clone ssh_url && git checkout branchName | commit_id
 
-4. build base image: docker build -t projectName:commit_id -f dockerFilename .
+4. create container by base image
 
-5. run scripts(test script): docker run imageName:tag
+5. run scripts(test script) in container
 
 6. run build: CMD script execute
 
